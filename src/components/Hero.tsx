@@ -26,7 +26,7 @@ export default function Hero() {
       <div className="absolute inset-0 grid place-items-center">
         <div className="relative px-10 py-7">
           <CropMarks />
-          <p className="display text-center text-[13vw] leading-[0.85] md:text-[9vw] lg:text-[7.5rem]">
+          <p className="display text-center text-[2.75rem] leading-[0.85] sm:text-[3.5rem] md:text-[9vw] lg:text-[7.5rem]">
             {site.wordmark}
           </p>
         </div>

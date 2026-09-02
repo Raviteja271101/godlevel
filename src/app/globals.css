@@ -28,12 +28,20 @@
   body {
     background: var(--color-paper);
     color: var(--color-ink);
-    /* Everything is mono, uppercase, 1.2 line-height — as on the reference. */
+    /* Everything is mono, uppercase, 1.2 line-height — as on the reference,
+       which runs UI text at 16px on phones and 16.9px from tablet up. */
     font-family: var(--font-mono-ui);
-    font-size: 16.9px;
-    line-height: 20.28px;
+    font-size: 16px;
+    line-height: 19.2px;
     text-transform: uppercase;
     overflow-x: hidden;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 16.9px;
+      line-height: 20.28px;
+    }
   }
 
   ::selection {
@@ -66,8 +74,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6em;
-    font-size: 16.9px;
-    line-height: 20.28px;
+    font-size: inherit;
+    line-height: inherit;
     text-transform: uppercase;
   }
   .eyebrow::before {
@@ -93,10 +101,21 @@
   .no-bar::-webkit-scrollbar { display: none; }
 
   /* Justified mono paragraph block. */
+  /* Body copy sits well below UI text on phones — 12px on the reference —
+     then catches up with the rest of the page from tablet width. */
   .measure {
     max-width: 44ch;
+    font-size: 12px;
+    line-height: 14.4px;
     text-align: justify;
     text-transform: uppercase;
+  }
+
+  @media (min-width: 768px) {
+    .measure {
+      font-size: 16.9px;
+      line-height: 20.28px;
+    }
   }
 }
 

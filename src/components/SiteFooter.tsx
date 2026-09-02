@@ -7,7 +7,7 @@ export default function SiteFooter() {
     <footer className="hairline bg-night px-6 py-14 text-white md:px-8 md:py-20">
       <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
         <div>
-          <p className="display text-4xl md:text-6xl">{site.tagline}</p>
+          <p className="display text-[2rem] md:text-6xl">{site.tagline}</p>
           <div className="mt-10">
             <Newsletter />
           </div>

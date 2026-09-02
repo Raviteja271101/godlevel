@@ -17,7 +17,7 @@ export default function PageHeader({
         <p className="eyebrow">
           <ScrambleText text={eyebrow} trigger="view" />
         </p>
-        <h1 className="display mt-5 text-[15vw] leading-[0.85] md:text-[10vw] lg:text-[8rem]">
+        <h1 className="display mt-5 text-[2rem] leading-[0.9] sm:text-[2.75rem] md:text-[10vw] md:leading-[0.85] lg:text-[8rem]">
           <SplitWords text={title} stagger={70} />
         </h1>
         <p className="measure mt-8">{intro}</p>

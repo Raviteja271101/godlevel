@@ -84,7 +84,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
             buttons never sit on top of the title. */}
         <div className="absolute inset-x-6 bottom-28 md:inset-x-8 md:bottom-8">
           <p className="eyebrow opacity-70">{event.code}</p>
-          <h1 className="display mt-3 max-w-[14ch] text-[13vw] leading-[0.86] md:text-[7vw] lg:text-[5.5rem]">
+          <h1 className="display mt-3 max-w-[14ch] text-[2rem] leading-[0.92] sm:text-[2.5rem] md:text-[7vw] md:leading-[0.86] lg:text-[5.5rem]">
             <SplitWords text={`${site.wordmark} ${event.city}`} stagger={60} />
           </h1>
         </div>
