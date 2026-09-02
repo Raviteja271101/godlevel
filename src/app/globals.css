@@ -40,6 +40,15 @@
     background: var(--color-ink);
     color: var(--color-paper);
   }
+
+  /* The UA stylesheet forces text-transform:none on form controls, so they
+     opt out of the site-wide uppercase unless told to inherit it. */
+  button,
+  input,
+  select,
+  textarea {
+    text-transform: inherit;
+  }
 }
 
 @layer components {
