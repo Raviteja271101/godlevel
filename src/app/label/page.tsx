@@ -54,7 +54,7 @@ export default function LabelPage() {
       <section id="roster" className="hairline scroll-mt-24 border-t border-hair px-6 py-16 md:px-8 md:py-24">
         <Reveal>
           <p className="eyebrow">Artists</p>
-          <h2 className="display mt-4 text-[2rem] leading-none sm:text-[2.5rem] md:text-[7vw] lg:text-[5.5rem]">Roster</h2>
+          <h2 className="display t-statement mt-4">Roster</h2>
         </Reveal>
 
         <div className="mt-12 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">

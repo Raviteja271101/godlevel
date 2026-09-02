@@ -32,7 +32,7 @@ export default function HomePage() {
 
           <Reveal delay={100}>
             <div>
-              <p className="display text-[7vw] leading-[1.02] md:text-[3.6vw] lg:text-[3.2rem]">
+              <p className="display t-statement">
                 <SplitWords text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it." stagger={26} />
               </p>
               <Link href="/about" className="arrow-link mt-8 inline-block">

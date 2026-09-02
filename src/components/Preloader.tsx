@@ -60,7 +60,7 @@ export default function Preloader() {
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-night text-white transition-transform duration-[900ms] ease-[cubic-bezier(0.76,0,0.24,1)]"
       style={{ transform: leaving ? "translateY(-100%)" : "none" }}
     >
-      <p className="display text-4xl md:text-6xl">{site.wordmark}</p>
+      <p className="display t-statement">{site.wordmark}</p>
 
       <div className="mt-8 h-px w-[170px] bg-white/25">
         <div

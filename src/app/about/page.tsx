@@ -86,7 +86,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-2 gap-y-10 md:grid-cols-4">
           {stats.map((stat, i) => (
             <Reveal key={stat.label} delay={i * 80}>
-              <p className="display text-5xl md:text-6xl">{stat.value}</p>
+              <p className="display t-statement">{stat.value}</p>
               <p className="eyebrow mt-2 opacity-60">{stat.label}</p>
             </Reveal>
           ))}
@@ -110,7 +110,7 @@ export default function AboutPage() {
 
         <Reveal>
           <div className="hairline mt-16 flex flex-col gap-5 pt-8 md:flex-row md:items-end md:justify-between">
-            <p className="display max-w-xl text-3xl md:text-5xl">Working on something unusual?</p>
+            <p className="display t-statement max-w-xl">Working on something unusual?</p>
             <a href={`mailto:${site.email}`} className="arrow-link shrink-0">
               {site.email}
             </a>

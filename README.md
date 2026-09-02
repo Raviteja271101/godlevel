@@ -84,7 +84,10 @@ the `data-loaded` attribute on `<html>`.
 Tokens live once in `src/app/globals.css` under Tailwind v4's `@theme`.
 The visual language follows the reference site's measured values:
 
-- **Type** — everything is Chivo Mono, uppercase, 16.9px / 20.28px line-height.
+- **Type** — everything is Chivo Mono, uppercase, 1.2 line-height, stepping 14px /
+  16px / 18px at the 768px and 992px breakpoints.
+  Statement headings use `.t-statement` — 2em, going 3em from 992px up, so the
+  page tops out at 28 / 32 / 54px as the reference does.
   Large statements use Archivo 600 with -0.028em tracking and 1.0 leading.
 - **Colour** — white ground (`paper`), black ink, `hair` hairlines, plus
   inverted `night` sections. `scramble` cyan and `bubble` red are accents.

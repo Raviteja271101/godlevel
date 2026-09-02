@@ -29,18 +29,25 @@
     background: var(--color-paper);
     color: var(--color-ink);
     /* Everything is mono, uppercase, 1.2 line-height — as on the reference,
-       which runs UI text at 16px on phones and 16.9px from tablet up. */
+       which steps UI text 14 / 16 / 18px across its three breakpoints. */
     font-family: var(--font-mono-ui);
-    font-size: 16px;
-    line-height: 19.2px;
+    font-size: 14px;
+    line-height: 16.8px;
     text-transform: uppercase;
     overflow-x: hidden;
   }
 
   @media (min-width: 768px) {
     body {
-      font-size: 16.9px;
-      line-height: 20.28px;
+      font-size: 16px;
+      line-height: 19.2px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    body {
+      font-size: 18px;
+      line-height: 21.6px;
     }
   }
 
@@ -67,6 +74,20 @@
     letter-spacing: -0.028em;
     line-height: 1;
     text-transform: uppercase;
+  }
+
+  /* Type ladder — the reference tops its pages out at one step: 2em, going
+     3em from 992px up. Held in em so it follows the 14 / 16 / 18px body
+     base rather than a fixed root, exactly as the reference does. */
+  .t-statement {
+    font-size: 2em;
+    line-height: 1;
+  }
+
+  @media (min-width: 992px) {
+    .t-statement {
+      font-size: 3em;
+    }
   }
 
   /* ▪ EYEBROW — a filled square then the label. */
@@ -113,8 +134,9 @@
 
   @media (min-width: 768px) {
     .measure {
-      font-size: 16.9px;
-      line-height: 20.28px;
+      /* Tracks the body step, so it stays in ratio at every breakpoint. */
+      font-size: 1em;
+      line-height: 1.2;
     }
   }
 }

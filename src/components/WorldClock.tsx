@@ -36,7 +36,7 @@ export default function WorldClock() {
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
         <div>
-          <h2 className="display text-[2rem] leading-[0.9] sm:text-[2.5rem] md:text-[8vw] md:leading-[0.85] lg:text-[6.5rem]">{place.city}</h2>
+          <h2 className="display t-statement">{place.city}</h2>
           <p className="measure mt-5">
             {place.venue}, {place.country}. {place.blurb}
           </p>

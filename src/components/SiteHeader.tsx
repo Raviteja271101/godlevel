@@ -20,19 +20,22 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
+      {/* `position: fixed` always opens a stacking context, so the blend has to
+          live on the header itself — on a child it would only ever difference
+          against the header's own empty backdrop, never the page beneath. */}
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference">
         <div className="flex items-start justify-between px-6 py-5 md:px-8">
-          <Link href="/" className="pointer-events-auto display text-2xl leading-none text-white mix-blend-difference md:text-3xl">
+          <Link href="/" className="pointer-events-auto display text-2xl leading-none md:text-3xl">
             <ScrambleText text={site.wordmark} />
           </Link>
 
           {/* Paired columns, as on the reference. */}
-          <nav className="pointer-events-auto hidden gap-x-14 mix-blend-difference lg:flex">
+          <nav className="pointer-events-auto hidden gap-x-14 lg:flex">
             {navGroups.map((group, i) => (
               <ul key={i} className="space-y-1">
                 {group.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} className="eyebrow text-white transition-opacity hover:opacity-60">
+                    <Link href={item.href} className="eyebrow transition-opacity hover:opacity-60">
                       <ScrambleText text={item.count ? `${item.label} [${item.count}]` : item.label} />
                     </Link>
                   </li>
@@ -40,18 +43,20 @@ export default function SiteHeader() {
               </ul>
             ))}
           </nav>
-
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="pointer-events-auto rounded-[2px] bg-ink px-4 py-3 text-white lg:hidden"
-          >
-            <span className="eyebrow">{open ? "Close" : "Menu"}</span>
-          </button>
         </div>
       </header>
+
+      {/* Kept outside the blended layer: differenced, the solid ink pill would
+          invert to paper and disappear against a light page. */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-label={open ? "Close menu" : "Open menu"}
+        className="fixed right-6 top-5 z-50 rounded-[2px] bg-ink px-4 py-3 text-white md:right-8 lg:hidden"
+      >
+        <span className="eyebrow">{open ? "Close" : "Menu"}</span>
+      </button>
 
       <div
         className={`fixed inset-0 z-40 bg-paper transition-opacity duration-300 lg:hidden ${

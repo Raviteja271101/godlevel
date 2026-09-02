@@ -9,7 +9,7 @@ export default function Hero() {
   const next = events[0];
 
   return (
-    <section className="relative h-[100svh] min-h-[620px] w-full overflow-hidden bg-night text-white">
+    <section className="relative isolate h-[100svh] min-h-[620px] w-full overflow-hidden bg-night text-white">
       <video
         autoPlay
         muted
@@ -22,11 +22,11 @@ export default function Hero() {
       </video>
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Centred wordmark, itself framed. */}
+      {/* Centred wordmark, itself framed. Marks and type blend as one group. */}
       <div className="absolute inset-0 grid place-items-center">
-        <div className="relative px-10 py-7">
+        <div className="relative px-10 py-7 mix-blend-difference">
           <CropMarks />
-          <p className="display text-center text-[2.75rem] leading-[0.85] sm:text-[3.5rem] md:text-[9vw] lg:text-[7.5rem]">
+          <p className="display text-center text-[2.5rem] leading-[0.85] md:text-[3.25rem] lg:text-[3.5rem]">
             {site.wordmark}
           </p>
         </div>
