@@ -80,7 +80,9 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           <Meta event={event} />
         </div>
 
-        <div className="absolute inset-x-6 bottom-6 md:inset-x-8 md:bottom-8">
+        {/* Extra bottom clearance on small screens so the pinned ticket
+            buttons never sit on top of the title. */}
+        <div className="absolute inset-x-6 bottom-28 md:inset-x-8 md:bottom-8">
           <p className="eyebrow opacity-70">{event.code}</p>
           <h1 className="display mt-3 max-w-[14ch] text-[13vw] leading-[0.86] md:text-[7vw] lg:text-[5.5rem]">
             <SplitWords text={`${site.wordmark} ${event.city}`} stagger={60} />

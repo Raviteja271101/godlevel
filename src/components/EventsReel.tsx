@@ -18,10 +18,12 @@ const CODES: Record<string, string> = {
   Chile: "CL",
 };
 
+const code = (country: string) => CODES[country] ?? country.slice(0, 2).toUpperCase();
+
 /**
- * A centred vertical reel of event artwork with index rails either side.
- * The rails stay pinned on the centre line and highlight whichever slide
- * is currently crossing it.
+ * Desktop: a centred vertical reel with index rails pinned either side.
+ * Mobile: the rails have nowhere to go, so they drop away and each slide
+ * becomes a full-width card carrying its own caption row.
  */
 export default function EventsReel({ events }: { events: Event[] }) {
   const [active, setActive] = useState(0);
@@ -49,16 +51,15 @@ export default function EventsReel({ events }: { events: Event[] }) {
     slideRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  const rowTone = (i: number) =>
-    i === active ? "opacity-100" : "opacity-30 hover:opacity-60";
+  const rowTone = (i: number) => (i === active ? "opacity-100" : "opacity-30 hover:opacity-60");
 
   return (
     <div className="relative">
-      {/* ---- Index rails: pinned to the centre line ---- */}
-      <div className="pointer-events-none sticky top-0 z-20 h-[100svh]">
+      {/* ---- Index rails: desktop only, pinned to the centre line ---- */}
+      <div className="pointer-events-none sticky top-0 z-20 hidden h-[100svh] lg:block">
         {/* Edge inset grows with the viewport, but stays tight enough at
             mid widths that the rails never reach the centred image. */}
-        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between gap-8 px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-[clamp(4rem,10vw,13rem)]">
+        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between gap-8 px-10 xl:px-16 2xl:px-[clamp(4rem,10vw,13rem)]">
           {/* Titles */}
           <div className="pointer-events-auto">
             <p className="eyebrow mb-4">Upcoming events</p>
@@ -73,7 +74,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
                   >
                     <span className="text-ink-30">[{i + 1}]</span>
                     <span className="border border-current px-1 leading-none opacity-70">
-                      {CODES[event.country] ?? event.country.slice(0, 2).toUpperCase()}
+                      {code(event.country)}
                     </span>
                     <span>
                       {site.wordmark} {event.city}
@@ -85,7 +86,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
           </div>
 
           {/* Dates */}
-          <div className="pointer-events-auto hidden text-right sm:block">
+          <div className="pointer-events-auto text-right">
             <p className="eyebrow mb-4 justify-end">Date</p>
             <ul>
               {events.map((event, i) => (
@@ -104,20 +105,26 @@ export default function EventsReel({ events }: { events: Event[] }) {
         </div>
       </div>
 
-      {/* ---- The reel itself, pulled up under the pinned rails ---- */}
-      <div className="-mt-[100svh]">
+      {/* ---- Mobile heading, standing in for the rails ---- */}
+      <div className="flex items-baseline justify-between gap-4 px-6 pt-28 pb-6 lg:hidden">
+        <p className="eyebrow">Upcoming events</p>
+        <p className="opacity-50">[{events.length}]</p>
+      </div>
+
+      {/* ---- The reel ---- */}
+      <div className="lg:-mt-[100svh]">
         {events.map((event, i) => (
           <div
             key={event.slug}
             ref={(el) => {
               slideRefs.current[i] = el;
             }}
-            className="grid h-[100svh] place-items-center"
+            className="grid place-items-center px-6 pb-14 lg:h-[100svh] lg:px-0 lg:pb-0"
           >
             <Link
               href={`/events/${event.slug}`}
               data-cursor-text={event.status === "Sold out" ? "Sold out" : "Info & tickets"}
-              className="group block w-[min(62vw,440px)]"
+              className="group block w-full lg:w-[min(62vw,440px)]"
             >
               <div
                 className={`relative aspect-[4/3] overflow-hidden bg-[#efefef] transition-opacity duration-500 ${
@@ -130,9 +137,25 @@ export default function EventsReel({ events }: { events: Event[] }) {
                   src={event.image}
                   alt={`${event.venue}, ${event.city}`}
                   fill
-                  sizes="(max-width: 640px) 62vw, 440px"
+                  sizes="(max-width: 1024px) 88vw, 440px"
                   className="media-zoom object-cover group-hover:scale-[1.03]"
                 />
+              </div>
+
+              {/* Caption row — mobile only; desktop reads this off the rails. */}
+              <div
+                className={`mt-3 flex items-baseline justify-between gap-4 transition-opacity duration-500 lg:hidden ${
+                  i === active ? "opacity-100" : "opacity-40"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-ink-30">[{String(i + 1).padStart(2, "0")}]</span>
+                  <span className="border border-current px-1 leading-none opacity-70">
+                    {code(event.country)}
+                  </span>
+                  <span>{event.city}</span>
+                </span>
+                <span className="shrink-0 opacity-70">{formatDate(event.date)}</span>
               </div>
             </Link>
           </div>

@@ -17,22 +17,22 @@ export default function EventCTA({ event }: { event: Event }) {
     `&details=${encodeURIComponent(event.blurb)}`;
 
   return (
-    <div className="fixed right-6 bottom-6 z-[58] flex gap-2 md:right-8 md:bottom-8">
+    <div className="fixed right-6 bottom-6 z-[58] flex gap-1.5 md:right-8 md:bottom-8 md:gap-2">
       <a
         href={calendarHref}
         target="_blank"
         rel="noreferrer"
-        className="rounded-[2px] bg-ink px-4 py-3 text-white transition-opacity hover:opacity-80"
+        className="rounded-[2px] bg-ink px-3 py-2.5 text-white transition-opacity hover:opacity-80 md:px-4 md:py-3"
       >
         Add to calendar +
       </a>
 
       {soldOut ? (
-        <span className="rounded-[2px] bg-ink-30 px-4 py-3 text-white">Sold out</span>
+        <span className="rounded-[2px] bg-ink-30 px-3 py-2.5 text-white md:px-4 md:py-3">Sold out</span>
       ) : (
         <a
           href="#tickets"
-          className="arrow-link rounded-[2px] bg-bubble px-4 py-3 text-white transition-opacity hover:opacity-80"
+          className="arrow-link rounded-[2px] bg-bubble px-3 py-2.5 text-white transition-opacity hover:opacity-80 md:px-4 md:py-3"
         >
           Tickets
         </a>

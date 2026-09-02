@@ -20,14 +20,14 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 mix-blend-difference">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
         <div className="flex items-start justify-between px-6 py-5 md:px-8">
-          <Link href="/" className="pointer-events-auto display text-2xl leading-none text-white md:text-3xl">
+          <Link href="/" className="pointer-events-auto display text-2xl leading-none text-white mix-blend-difference md:text-3xl">
             <ScrambleText text={site.wordmark} />
           </Link>
 
           {/* Paired columns, as on the reference. */}
-          <nav className="pointer-events-auto hidden gap-x-14 lg:flex">
+          <nav className="pointer-events-auto hidden gap-x-14 mix-blend-difference lg:flex">
             {navGroups.map((group, i) => (
               <ul key={i} className="space-y-1">
                 {group.map((item) => (
@@ -46,9 +46,9 @@ export default function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? "Close menu" : "Open menu"}
-            className="pointer-events-auto text-white lg:hidden"
+            className="pointer-events-auto rounded-[2px] bg-ink px-4 py-3 text-white lg:hidden"
           >
-            {open ? "Close" : "Menu"}
+            <span className="eyebrow">{open ? "Close" : "Menu"}</span>
           </button>
         </div>
       </header>
