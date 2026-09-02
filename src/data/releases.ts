@@ -47,41 +47,6 @@ export const releases: Release[] = [
   },
 ];
 
-export type Artist = {
-  name: string;
-  role: string;
-  based: string;
-  image: string;
-  bio: string;
-};
-
-export const roster: Artist[] = [
-  {
-    name: "Azimuth",
-    role: "Producer / Live",
-    based: "Lisbon, PT",
-    image: "/media/artist-01.jpg",
-    bio: "Builds sets out of long, slow-moving drones that resolve into rhythm somewhere past the fortieth minute.",
-  },
-  {
-    name: "Nyla Okonkwo",
-    role: "Composer / DJ",
-    based: "Lagos, NG",
-    image: "/media/artist-04.jpg",
-    bio: "Modular systems and field recordings, arranged with the patience of someone who does not care what time it is.",
-  },
-  {
-    name: "Velour Crash",
-    role: "Live A/V",
-    based: "Berlin, DE",
-    image: "/media/artist-02.jpg",
-    bio: "A duo working in strobe and sub-bass. Loud, precise, and over before you expect it.",
-  },
-  {
-    name: "Marius Belan",
-    role: "DJ",
-    based: "Tallinn, EE",
-    image: "/media/artist-03.jpg",
-    bio: "Twenty years of records, most of them bought secondhand, all of them played too quietly at first.",
-  },
-];
+// Roster and artist records live in artists.ts (shared with event line-ups).
+export { roster, artists, resolveLineup } from "./artists";
+export type { Artist } from "./artists";

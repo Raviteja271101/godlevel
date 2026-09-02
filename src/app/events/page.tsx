@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import CropMarks from "@/components/CropMarks";
 import { formatDate } from "@/components/EventCard";
 import PageHeader from "@/components/PageHeader";
 import Reveal from "@/components/Reveal";
 import { events } from "@/data/events";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -25,7 +27,8 @@ export default function EventsPage() {
           {events.map((event, i) => (
             <li key={event.code}>
               <Reveal>
-                <article
+                <Link
+                  href={`/events/${event.slug}`}
                   className="group grid gap-4 border-b border-hair py-6 md:grid-cols-[52px_140px_1fr_auto] md:items-center md:gap-8"
                   data-cursor-text={event.status === "Sold out" ? "Sold out" : "Info & tickets"}
                 >
@@ -44,7 +47,7 @@ export default function EventsPage() {
 
                   <div>
                     <h2 className="display text-3xl md:text-4xl">
-                      {event.city}
+                      {site.wordmark} {event.city}
                       <span className="text-ink-30">, {event.country}</span>
                     </h2>
                     <p className="mt-1">{event.venue}</p>
@@ -56,7 +59,7 @@ export default function EventsPage() {
                     <p>{formatDate(event.date)}</p>
                     <p className="mt-1 opacity-60">{event.status}</p>
                   </div>
-                </article>
+                </Link>
               </Reveal>
             </li>
           ))}

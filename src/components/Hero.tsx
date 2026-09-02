@@ -40,7 +40,7 @@ export default function Hero() {
 
       {/* Bottom-right "next up" card. */}
       <Link
-        href="/events"
+        href={`/events/${next.slug}`}
         data-cursor-text="Info & tickets"
         className="group absolute right-6 bottom-6 hidden items-center gap-4 md:right-8 md:bottom-8 md:flex"
       >

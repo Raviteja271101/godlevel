@@ -16,7 +16,7 @@ export default function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-3">
           {footerColumns.map((col) => (
             <div key={col.title}>
-              <h3 className="eyebrow opacity-60">{col.title}</h3>
+              <h3 className="opacity-60">[{col.title.toUpperCase()}]</h3>
               <ul className="mt-4 space-y-1">
                 {col.links.map((link) => (
                   <li key={link.label}>

@@ -20,7 +20,7 @@ export default function EventCard({
   sizes: string;
 }) {
   return (
-    <Link href="/events" className="group block" data-cursor-text="Info & tickets">
+    <Link href={`/events/${event.slug}`} className="group block" data-cursor-text="Info & tickets">
       <div className="relative aspect-[16/11] overflow-hidden bg-[#efefef]">
         <CropMarks />
         <Image
