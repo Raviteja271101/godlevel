@@ -92,6 +92,36 @@
 }
 
 /* ------------------------------------------------------------------
+   Persistent viewport frame
+   Six markers pinned 20px inside the viewport on every page: four corner
+   brackets plus a tick at the vertical midpoint of each side. Blended with
+   `difference` so they read white over dark media and black over paper.
+   ------------------------------------------------------------------ */
+.viewport-marks {
+  position: fixed;
+  inset: 20px;
+  z-index: 55;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: #fff;
+}
+.viewport-marks i {
+  position: absolute;
+  display: block;
+  border: 0 solid currentColor;
+}
+.viewport-marks i.tl { top: 0; left: 0; width: 10px; height: 10px; border-top-width: 1px; border-left-width: 1px; }
+.viewport-marks i.tr { top: 0; right: 0; width: 10px; height: 10px; border-top-width: 1px; border-right-width: 1px; }
+.viewport-marks i.bl { bottom: 0; left: 0; width: 10px; height: 10px; border-bottom-width: 1px; border-left-width: 1px; }
+.viewport-marks i.br { bottom: 0; right: 0; width: 10px; height: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+.viewport-marks i.ml { top: 50%; left: 0; width: 10px; height: 19px; margin-top: -9.5px; border-left-width: 1px; border-top-width: 1px; border-bottom-width: 1px; }
+.viewport-marks i.mr { top: 50%; right: 0; width: 10px; height: 19px; margin-top: -9.5px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; }
+
+@media (max-width: 640px) {
+  .viewport-marks { inset: 12px; }
+}
+
+/* ------------------------------------------------------------------
    Corner registration marks
    Four L-shaped brackets, drawn with borders on ::before/::after of
    two spans so a single element can frame any box.

@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SmoothScroll from "@/components/SmoothScroll";
 import Preloader from "@/components/Preloader";
 import Cursor from "@/components/Cursor";
+import ViewportMarks from "@/components/ViewportMarks";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Preloader />
         <SmoothScroll />
         <Cursor />
+        <ViewportMarks />
 
         <SiteHeader />
         <main>{children}</main>

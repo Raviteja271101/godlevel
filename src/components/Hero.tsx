@@ -22,11 +22,6 @@ export default function Hero() {
       </video>
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Viewport-edge registration marks. */}
-      <div className="pointer-events-none absolute inset-5 md:inset-7">
-        <CropMarks />
-      </div>
-
       {/* Centred wordmark, itself framed. */}
       <div className="absolute inset-0 grid place-items-center">
         <div className="relative px-10 py-7">
