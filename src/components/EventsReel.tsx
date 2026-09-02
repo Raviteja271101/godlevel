@@ -56,7 +56,9 @@ export default function EventsReel({ events }: { events: Event[] }) {
     <div className="relative">
       {/* ---- Index rails: pinned to the centre line ---- */}
       <div className="pointer-events-none sticky top-0 z-20 h-[100svh]">
-        <div className="absolute inset-x-6 top-1/2 flex -translate-y-1/2 justify-between gap-6 md:inset-x-8">
+        {/* Edge inset grows with the viewport, but stays tight enough at
+            mid widths that the rails never reach the centred image. */}
+        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between gap-8 px-6 md:px-8 lg:px-10 xl:px-16 2xl:px-[clamp(4rem,10vw,13rem)]">
           {/* Titles */}
           <div className="pointer-events-auto">
             <p className="eyebrow mb-4">Upcoming events</p>
