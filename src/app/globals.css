@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@theme {
+  /* Light ground, black ink — matching the reference's base. */
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-ink-60: #6b6b6b;
+  --color-ink-30: #b4b4b4;
+  --color-hair: #d8d8d8;
+
+  /* Inverted sections. */
+  --color-night: #000000;
+
+  --color-scramble: #00deff;
+  --color-bubble: #ff2b29;
+
+  --font-mono-ui: var(--font-chivo-mono), ui-monospace, monospace;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    /* Everything is mono, uppercase, 1.2 line-height — as on the reference. */
+    font-family: var(--font-mono-ui);
+    font-size: 16.9px;
+    line-height: 20.28px;
+    text-transform: uppercase;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+}
+
+@layer components {
+  /* Large statement type: grotesk 600, tight tracking, solid leading. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  /* ▪ EYEBROW — a filled square then the label. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 16.9px;
+    line-height: 20.28px;
+    text-transform: uppercase;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 0.42em;
+    height: 0.42em;
+    background: currentColor;
+    flex: none;
+  }
+
+  /* Trailing-arrow link, e.g. EXPLORE ALL ↳ */
+  .arrow-link::after {
+    content: " \21B3";
+    display: inline-block;
+    margin-left: 0.5em;
+  }
+
+  .hairline {
+    border-top: 1px solid var(--color-hair);
+  }
+
+  .no-bar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-bar::-webkit-scrollbar { display: none; }
+
+  /* Justified mono paragraph block. */
+  .measure {
+    max-width: 44ch;
+    text-align: justify;
+    text-transform: uppercase;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Corner registration marks
+   Four L-shaped brackets, drawn with borders on ::before/::after of
+   two spans so a single element can frame any box.
+   ------------------------------------------------------------------ */
+.marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: currentColor;
+}
+.marks span,
+.marks span::before {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  content: "";
+}
+.marks span:nth-child(1) { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.marks span:nth-child(2) { top: -1px; right: -1px; border-top: 1px solid; border-right: 1px solid; }
+.marks span:nth-child(3) { bottom: -1px; left: -1px; border-bottom: 1px solid; border-left: 1px solid; }
+.marks span:nth-child(4) { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+.marks span::before { content: none; }
+
+/* ------------------------------------------------------------------
+   Motion
+   ------------------------------------------------------------------ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+}
+[data-reveal="shown"] { opacity: 1; transform: none; }
+
+.splitwords .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.45em);
+  transition:
+    opacity 0.85s var(--ease-out-expo),
+    transform 0.85s var(--ease-out-expo);
+  will-change: transform, opacity;
+}
+.splitwords[data-inview="true"] .word { opacity: 1; transform: none; }
+
+html:not([data-loaded]) [data-reveal],
+html:not([data-loaded]) .splitwords .word { transition: none !important; }
+
+.scramble-char { display: inline-block; white-space: pre; }
+.scramble-char[data-scrambling="true"] { color: var(--color-scramble); }
+
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--color-ink);
+  animation: wipe-up 0.85s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  pointer-events: none;
+}
+@keyframes wipe-up { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+
+.page-enter { animation: page-in 0.9s var(--ease-out-expo) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* Cursor bubble — red pill, as on the reference. */
+.cursor-bubble {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  padding: 0.9rem 1.2rem;
+  border-radius: 2px;
+  background: var(--color-bubble);
+  color: #fff;
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  transition:
+    opacity 0.35s var(--ease-out-expo),
+    transform 0.45s var(--ease-out-expo);
+}
+.cursor-bubble[data-active="true"] { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+.media-zoom {
+  transition:
+    transform 0.6s var(--ease-out-expo),
+    opacity 0.6s var(--ease-out-expo),
+    filter 0.6s var(--ease-out-expo);
+}
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-track { animation: marquee 38s linear infinite; will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-reveal],
+  .splitwords .word { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .marquee-track { animation: none !important; }
+  .page-wipe { display: none; }
+  .page-enter { animation: none; }
+  .cursor-bubble { display: none; }
+}
