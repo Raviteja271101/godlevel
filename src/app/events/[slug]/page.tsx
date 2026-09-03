@@ -9,7 +9,7 @@ import LineupRail from "@/components/LineupRail";
 import Reveal from "@/components/Reveal";
 import SplitWords from "@/components/SplitWords";
 import { resolveLineup } from "@/data/artists";
-import { events, getEvent } from "@/data/events";
+import { events, formatLat, formatLon, getEvent } from "@/data/events";
 import { site } from "@/data/site";
 
 export function generateStaticParams() {
@@ -109,7 +109,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
                 </p>
               ))}
               <p className="measure opacity-60">
-                {event.venue}. {event.coords.lat} / {event.coords.lon}
+                {event.venue}. {formatLat(event.coords.lat)} / {formatLon(event.coords.lon)}
               </p>
             </div>
           </Reveal>

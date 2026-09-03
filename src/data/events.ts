@@ -10,7 +10,8 @@ export type Event = {
   time: string;
   /** IANA zone, used by the "Around the World" clock. */
   tz: string;
-  coords: { lat: string; lon: string };
+  /** Signed decimal degrees; display strings are derived from these. */
+  coords: { lat: number; lon: number };
   status: "On sale" | "Final release" | "Sold out" | "Announced";
   lineup: string[];
   image: string;
@@ -32,7 +33,7 @@ export const events: Event[] = [
     date: "2026-10-03",
     time: "22:00 - 10:00",
     tz: "Asia/Tbilisi",
-    coords: { lat: "41.6938° N", lon: "44.8015° E" },
+    coords: { lat: 41.6938, lon: 44.8015 },
     status: "Sold out",
     lineup: ["Azimuth", "Nyla Okonkwo", "Marius Belan"],
     image: "/media/event-01.jpg",
@@ -55,7 +56,7 @@ export const events: Event[] = [
     date: "2026-10-24",
     time: "20:00 - 11:00",
     tz: "Atlantic/Reykjavik",
-    coords: { lat: "64.1466° N", lon: "21.9426° W" },
+    coords: { lat: 64.1466, lon: -21.9426 },
     status: "Final release",
     lineup: ["Velour Crash", "Azimuth", "Hlin Sor"],
     image: "/media/event-04.jpg",
@@ -78,7 +79,7 @@ export const events: Event[] = [
     date: "2026-11-07",
     time: "18:00 - 06:00",
     tz: "Africa/Casablanca",
-    coords: { lat: "31.4013° N", lon: "8.2201° W" },
+    coords: { lat: 31.4013, lon: -8.2201 },
     status: "On sale",
     lineup: ["Nyla Okonkwo", "Sana Toma", "Marius Belan"],
     image: "/media/event-02.jpg",
@@ -101,7 +102,7 @@ export const events: Event[] = [
     date: "2026-11-21",
     time: "21:00 - 07:00",
     tz: "Europe/Athens",
-    coords: { lat: "37.1036° N", lon: "25.3766° E" },
+    coords: { lat: 37.1036, lon: 25.3766 },
     status: "On sale",
     lineup: ["Azimuth", "Velour Crash"],
     image: "/media/event-03.jpg",
@@ -124,7 +125,7 @@ export const events: Event[] = [
     date: "2026-12-12",
     time: "22:00 - 08:00",
     tz: "Europe/Tallinn",
-    coords: { lat: "59.4432° N", lon: "24.7453° E" },
+    coords: { lat: 59.4432, lon: 24.7453 },
     status: "Announced",
     lineup: ["Marius Belan", "Hlin Sor", "Sana Toma"],
     image: "/media/event-06.jpg",
@@ -147,7 +148,7 @@ export const events: Event[] = [
     date: "2027-01-16",
     time: "19:00 - 05:00",
     tz: "America/Santiago",
-    coords: { lat: "33.0472° S", lon: "71.6127° W" },
+    coords: { lat: -33.0472, lon: -71.6127 },
     status: "Announced",
     lineup: ["Nyla Okonkwo", "Azimuth", "Velour Crash"],
     image: "/media/event-05.jpg",
@@ -162,6 +163,14 @@ export const events: Event[] = [
     ],
   },
 ];
+
+/** 41.6938 -> "41.6938° N" */
+export const formatLat = (lat: number) =>
+  `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? "N" : "S"}`;
+
+/** -21.9426 -> "21.9426° W" */
+export const formatLon = (lon: number) =>
+  `${Math.abs(lon).toFixed(4)}° ${lon >= 0 ? "E" : "W"}`;
 
 const bySlug = new Map(events.map((e) => [e.slug, e]));
 export const getEvent = (slug: string) => bySlug.get(slug);
