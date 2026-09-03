@@ -36,14 +36,38 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  /* The parse-time script below stamps data-intro and data-loaded on <html>
+     before React hydrates, which is the whole point of it, so the server HTML
+     will not match. suppressHydrationWarning covers this element's own
+     attributes only, not the tree beneath it. */
   return (
-    <html lang="en" className={`${archivo.variable} ${chivoMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${archivo.variable} ${chivoMono.variable}`}>
       <body className="antialiased">
-        {/* Runs at parse time, ahead of the browser restoring a previous
-            scroll position — the intro must start at the top of the hero. */}
+        {/* Runs at parse time, doing three things a React effect cannot,
+            since one only fires once hydration is done: stop the browser
+            restoring a previous scroll position, start the intro on the
+            first painted frame, and set the flag that ends it.
+
+            The intro is gated rather than started here because a CSS
+            animation otherwise begins the moment the stylesheet applies —
+            on a cold load that is before the video has painted, so the box
+            would already be part-grown by the time anyone saw it. The 1500
+            below must stay in step with --load-duration in globals.css. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `if("scrollRestoration" in history){history.scrollRestoration="manual"}`,
+            __html:
+              'if("scrollRestoration" in history){history.scrollRestoration="manual"}' +
+              'var d=document.documentElement;' +
+              'function end(){try{sessionStorage.setItem("sl:loaded","1")}catch(e){}' +
+              'd.setAttribute("data-loaded","");if(!location.hash){scrollTo(0,0)}}' +
+              'try{' +
+              'if(sessionStorage.getItem("sl:loaded")||matchMedia("(prefers-reduced-motion: reduce)").matches){' +
+              'd.setAttribute("data-loaded","")}else{' +
+              'if(!location.hash){scrollTo(0,0)}' +
+              'var go=function(){d.setAttribute("data-intro","");setTimeout(end,1500)};' +
+              'var kick=function(){requestAnimationFrame(function(){requestAnimationFrame(go)})};' +
+              'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",kick)}else{kick()}' +
+              '}}catch(e){d.setAttribute("data-loaded","")}',
           }}
         />
 

@@ -314,19 +314,92 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   .page-enter { animation: none; }
   .cursor-bubble { display: none; }
 }
-
 /* ------------------------------------------------------------------
    First load
-   The hero opens as a small centred box that grows with the loader count,
-   then expands to full bleed when `data-loaded` lands. The hero lifts above
-   the loader and supplies the pale ground, so the readout can sit over it.
+   The hero opens as a small centred box that grows with the count, then
+   expands to full bleed once `data-loaded` lands. This all runs on CSS
+   animations rather than script: they start the moment the stylesheet
+   applies, whereas a React effect cannot begin until hydration finishes
+   and so left the readout stuck at 0% for as long as that took.
+   The duration below must stay in step with the timeout in layout.tsx.
    ------------------------------------------------------------------ */
+:root {
+  --load-duration: 1.5s;
+}
+
+/* Registered so it can be animated, then printed through a counter. */
+@property --load-pct {
+  syntax: "<integer>";
+  /* Must inherit: the ::after that prints the counter would otherwise fall
+     back to initial-value and read 0 the whole way through. */
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes load-count {
+  to { --load-pct: 100; }
+}
+
+@keyframes load-bar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes hero-open {
+  from { transform: scale(0.12); }
+  to { transform: scale(0.44); }
+}
+
+@keyframes frame-open {
+  from { width: calc(12% + 1.25rem); height: calc(12% + 1.25rem); }
+  to { width: calc(44% + 1.25rem); height: calc(44% + 1.25rem); }
+}
+
+.loader-count::after {
+  counter-reset: pct var(--load-pct);
+  content: counter(pct) "%";
+}
+
+html[data-intro]:not([data-loaded]) .loader-count {
+  animation: load-count var(--load-duration) var(--ease-out-expo) both;
+}
+
+html:not([data-loaded]) .loader-fill {
+  width: 0;
+}
+
+html[data-intro]:not([data-loaded]) .loader-fill {
+  animation: load-bar var(--load-duration) var(--ease-out-expo) both;
+}
+
+/* Hold the finished value through the fade-out. Without this the count drops
+   back to its initial 0 the moment the animation stops applying. */
+html[data-loaded] .loader-count {
+  --load-pct: 100;
+}
+
+html[data-loaded] .loader {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s linear, visibility 0s linear 0.5s;
+}
+
 .hero-media {
   transform-origin: center;
 }
 
-/* No transition while counting: rAF already animates --load-scale every frame,
-   so a transition here only lags it. It applies to the final expansion. */
+/* Held at the opening size until the intro is triggered, so a slow first
+   paint cannot leave the box part-grown before anyone has seen it. */
+html:not([data-loaded]) .hero-media {
+  transform: scale(0.12);
+}
+
+html[data-intro]:not([data-loaded]) .hero-media {
+  animation: hero-open var(--load-duration) var(--ease-out-expo) both;
+}
+
+/* Applies to the final expansion only — during the count the keyframes
+   already carry the value, and a transition would only lag them. */
 html[data-loaded] .hero-media {
   transition: transform 1.2s var(--ease-out-expo);
 }
@@ -340,23 +413,23 @@ html:not([data-loaded]) .hero {
   background: var(--color-paper);
 }
 
-html:not([data-loaded]) .hero-media {
-  transform: scale(var(--load-scale, 0.12));
-}
-
-/* Frame for the loading box. Sized from the same variable that drives the
-   scale, but never transformed, so the brackets stay hairline-thin. */
+/* Frame for the loading box. Tracks the same timeline as the scale but is
+   never transformed, so the brackets stay hairline-thin. */
 .hero-frame {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(var(--load-scale, 0.12) * 100% + 1.25rem);
-  height: calc(var(--load-scale, 0.12) * 100% + 1.25rem);
+  width: calc(12% + 1.25rem);
+  height: calc(12% + 1.25rem);
   transform: translate(-50%, -50%);
   pointer-events: none;
   /* .marks paints in currentColor, and the hero sets text-white — invisible
      against the pale loading ground, so force ink here. */
   color: var(--color-ink);
+}
+
+html[data-intro]:not([data-loaded]) .hero-frame {
+  animation: frame-open var(--load-duration) var(--ease-out-expo) both;
 }
 
 /* Once open, ViewportMarks carry the frame. */

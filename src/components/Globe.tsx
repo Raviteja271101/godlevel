@@ -18,6 +18,9 @@ const MARKER = "#ff2b29";
 /** Keeps the pole from tipping past vertical while dragging. */
 const clampLat = (lat: number) => Math.max(-90, Math.min(90, lat));
 
+/** Idle drift, in degrees per frame — about one turn every 100s at 60fps. */
+const SPIN = 0.06;
+
 /**
  * Orthographic globe: filled landmasses with country borders, a graticule
  * over the ocean, and one marker per show. The sphere turns to bring the
@@ -114,7 +117,11 @@ export default function Globe({
         velRef.current = [velRef.current[0] * 0.94, velRef.current[1] * 0.94];
         targetRef.current = rotRef.current;
       } else {
-        // Ease toward the selected city.
+        // Idle: drift west continuously so the globe is never still, easing
+        // toward the selected city as it goes.
+        if (!reduced) {
+          targetRef.current = [targetRef.current[0] - SPIN, targetRef.current[1]];
+        }
         const [tLon, tLat] = targetRef.current;
         if (reduced) {
           rotRef.current = [tLon, tLat];
