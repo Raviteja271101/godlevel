@@ -15,17 +15,23 @@ import { products } from "@/data/products";
 import { releases } from "@/data/releases";
 import { site } from "@/data/site";
 
+/* Two blocks. Lines inside a block sit directly under one another; only the
+   break between the blocks gets space. */
 const aboutCopy = [
-  "We create spaces where people can come together, discover something new, and experience things differently.",
-  "The goal isn't simply to create events.",
-  "It's to create moments.",
-  "Moments that bring people together.",
-  "Moments that stay with you.",
-  "Something you experience with your friends.",
-  "Or someone you meet for the first time.",
-  "Godlevel is built around curiosity, connection, and the idea that everyone should have a place to belong.",
-  "Come as you are.",
-  "Leave with something more.",
+  [
+    "We create spaces where people can come together, discover something new, and experience things differently.",
+    "The goal isn't simply to create events.",
+    "It's to create moments.",
+    "Moments that bring people together.",
+    "Moments that stay with you.",
+    "Something you experience with your friends.",
+    "Or someone you meet for the first time.",
+  ],
+  [
+    "Godlevel is built around curiosity, connection, and the idea that everyone should have a place to belong.",
+    "Come as you are.",
+    "Leave with something more.",
+  ],
 ];
 
 const GRID_SIZES = "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw";
@@ -58,10 +64,14 @@ export default function HomePage() {
 
             <div className="lg:w-[40%]">
               <Reveal delay={160}>
-                <div className="space-y-4">
-                  {aboutCopy.map((line) => (
-                    <p key={line} className="measure lg:max-w-none">
-                      {line}
+                <div className="space-y-6">
+                  {aboutCopy.map((block, i) => (
+                    <p key={i} className="measure lg:max-w-none">
+                      {block.map((line) => (
+                        <span key={line} className="block">
+                          {line}
+                        </span>
+                      ))}
                     </p>
                   ))}
                 </div>
