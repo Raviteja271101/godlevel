@@ -14,6 +14,7 @@ const BORDER = "#ffffff";
 const GRATICULE = "#e6e6e6";
 const LIMB = "#cfcfcf";
 const MARKER = "#ff2b29";
+const ACTIVE = "#000000";
 
 /** Keeps the pole from tipping past vertical while dragging. */
 const clampLat = (lat: number) => Math.max(-90, Math.min(90, lat));
@@ -29,16 +30,25 @@ const SPIN = 0.06;
 export default function Globe({
   events,
   active,
+  selected,
   onSelect,
   onInteract,
+  onHover,
 }: {
   events: Event[];
   active: number;
+  /* Index the user actually clicked. Null until then, so the globe opens
+     with no target planted on it. */
+  selected: number | null;
   onSelect: (index: number) => void;
   /** Fired when the user grabs the globe, so the caller can stop advancing. */
   onInteract?: () => void;
+  /* Fires with the point under the cursor, or null when off the sphere. */
+  onHover?: (coords: { lat: number; lon: number } | null) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  /* Set by the draw effect so pointer handlers can invert screen points. */
+  const projRef = useRef<ReturnType<typeof geoOrthographic> | null>(null);
   const [land, setLand] = useState<FeatureCollection | null>(null);
 
   // Current and target rotation, as d3 expects: [-lon, -lat].
@@ -90,8 +100,10 @@ export default function Globe({
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
     let size = 0;
+    const fontFamily = getComputedStyle(canvas).fontFamily;
 
     const projection = geoOrthographic().precision(0.4);
+    projRef.current = projection;
     const path = geoPath(projection, ctx);
     const graticule = geoGraticule10();
 
@@ -185,23 +197,54 @@ export default function Globe({
         const [sx, sy] = xy;
         hits.push({ x: sx, y: sy, i });
 
-        const isActive = i === active;
-        const s = isActive ? 9 : 6;
+        // Only a clicked point is marked out — the auto-advancing selection
+        // turns the globe but plants no target.
+        const isPicked = i === selected;
+        const s = isPicked ? 9 : 6;
 
-        ctx.fillStyle = MARKER;
-        ctx.globalAlpha = isActive ? 1 : 0.85;
+        ctx.fillStyle = isPicked ? ACTIVE : MARKER;
+        ctx.globalAlpha = isPicked ? 1 : 0.85;
         ctx.fillRect(sx - s / 2, sy - s / 2, s, s);
 
-        if (isActive) {
+        if (isPicked) {
           ctx.beginPath();
           ctx.arc(sx, sy, 14, 0, Math.PI * 2);
-          ctx.strokeStyle = MARKER;
+          ctx.strokeStyle = ACTIVE;
           ctx.lineWidth = 1;
           ctx.globalAlpha = 0.7;
           ctx.stroke();
         }
         ctx.globalAlpha = 1;
       });
+
+      // Below lg the corner readouts are hidden, so the globe labels itself:
+      // a black plate beside the active marker, as on the reference.
+      const act = hits.find((h) => h.i === selected);
+      if (act) {
+        const ev = events[act.i];
+        const lines = [
+          `${ev.city}, ${ev.country}`.toUpperCase(),
+          String(new Date(`${ev.date}T12:00:00Z`).getUTCFullYear()),
+        ];
+
+        ctx.font = `500 10px ${fontFamily}`;
+        ctx.textBaseline = "top";
+        const padX = 8;
+        const padY = 6;
+        const lineH = 15;
+        const boxW = Math.max(...lines.map((l) => ctx.measureText(l).width)) + padX * 2;
+        const boxH = lineH * lines.length + padY * 2 - 3;
+
+        // Sits to the right of the marker, flipping across when it would
+        // otherwise run off the canvas, and stays within the top and bottom.
+        const bx = act.x + 12 + boxW > size ? act.x - 12 - boxW : act.x + 12;
+        const by = Math.max(2, Math.min(size - boxH - 2, act.y - boxH / 2));
+
+        ctx.fillStyle = ACTIVE;
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.fillStyle = "#ffffff";
+        lines.forEach((l, n) => ctx.fillText(l, bx + padX, by + padY + n * lineH));
+      }
 
       hitsRef.current = hits;
       raf = requestAnimationFrame(draw);
@@ -215,7 +258,7 @@ export default function Globe({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [events, active, land]);
+  }, [events, active, selected, land]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     draggingRef.current = true;
@@ -227,6 +270,21 @@ export default function Globe({
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    // Report the point under the cursor so the caller can show live
+    // coordinates. Null whenever the pointer is off the sphere.
+    if (onHover && !draggingRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      const r = rect.width / 2;
+      if (Math.hypot(px - r, py - r) > r - 2) {
+        onHover(null);
+      } else {
+        const inv = projRef.current?.invert?.([px, py]);
+        onHover(inv ? { lon: inv[0], lat: inv[1] } : null);
+      }
+    }
+
     if (!draggingRef.current || !lastPtRef.current) return;
 
     const dx = e.clientX - lastPtRef.current.x;
@@ -279,6 +337,7 @@ export default function Globe({
       ref={canvasRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
+      onPointerLeave={() => onHover?.(null)}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       onClick={handleClick}

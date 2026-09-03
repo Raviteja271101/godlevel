@@ -22,6 +22,10 @@ export default function WorldClock() {
   const [index, setIndex] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [paused, setPaused] = useState(false);
+  /* Null until a point is clicked, so the globe opens unmarked. */
+  const [selected, setSelected] = useState<number | null>(null);
+  /* Point under the cursor, driving the live coordinate readout. */
+  const [hover, setHover] = useState<{ lat: number; lon: number } | null>(null);
 
   const shown = useMemo(
     () => (filter === "all" ? events : events.filter((e) => e.status !== "Sold out")),
@@ -64,6 +68,7 @@ export default function WorldClock() {
 
   const select = (i: number) => {
     setIndex(i);
+    setSelected(i);
     setPaused(true);
   };
 
@@ -88,6 +93,8 @@ export default function WorldClock() {
               active={safeIndex}
               onSelect={select}
               onInteract={() => setPaused(true)}
+              selected={selected != null && selected < shown.length ? selected : null}
+              onHover={setHover}
             />
           </div>
         </div>
@@ -121,10 +128,10 @@ export default function WorldClock() {
         <div className="order-3 mt-10 lg:pointer-events-none lg:absolute lg:inset-x-0 lg:bottom-0 lg:order-none lg:mt-0 lg:flex lg:items-end lg:justify-between lg:gap-8 lg:px-[7.8vw]">
           <div className="hidden lg:pointer-events-auto lg:block">
             <p>
-              <span className="opacity-50">Lat:</span> {formatLat(place.coords.lat)}
+              <span className="opacity-50">Lat:</span> {formatLat((hover ?? place.coords).lat)}
             </p>
             <p className="mt-1">
-              <span className="opacity-50">Lon:</span> {formatLon(place.coords.lon)}
+              <span className="opacity-50">Lon:</span> {formatLon((hover ?? place.coords).lon)}
             </p>
             <p className="mt-3">
               {place.code} &mdash; {place.city}, {place.country}
