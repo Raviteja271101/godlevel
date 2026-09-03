@@ -15,6 +15,9 @@ const GRATICULE = "#e6e6e6";
 const LIMB = "#cfcfcf";
 const MARKER = "#ff2b29";
 
+/** Keeps the pole from tipping past vertical while dragging. */
+const clampLat = (lat: number) => Math.max(-90, Math.min(90, lat));
+
 /**
  * Orthographic globe: filled landmasses with country borders, a graticule
  * over the ocean, and one marker per show. The sphere turns to bring the
@@ -24,10 +27,13 @@ export default function Globe({
   events,
   active,
   onSelect,
+  onInteract,
 }: {
   events: Event[];
   active: number;
   onSelect: (index: number) => void;
+  /** Fired when the user grabs the globe, so the caller can stop advancing. */
+  onInteract?: () => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [land, setLand] = useState<FeatureCollection | null>(null);
@@ -36,6 +42,13 @@ export default function Globe({
   const rotRef = useRef<[number, number]>([-events[0].coords.lon, -events[0].coords.lat]);
   const targetRef = useRef<[number, number]>([-events[0].coords.lon, -events[0].coords.lat]);
   const hitsRef = useRef<{ x: number; y: number; i: number }[]>([]);
+
+  // Drag state: while the user holds the globe they own the rotation, and on
+  // release it keeps spinning briefly before settling.
+  const draggingRef = useRef(false);
+  const lastPtRef = useRef<{ x: number; y: number } | null>(null);
+  const velRef = useRef<[number, number]>([0, 0]);
+  const movedRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +71,7 @@ export default function Globe({
   // Aim at the active city, unwrapping longitude so it takes the short way.
   useEffect(() => {
     const target = events[active];
-    if (!target) return;
+    if (!target || draggingRef.current) return;
     const want: [number, number] = [-target.coords.lon, -target.coords.lat];
     const [curLon] = targetRef.current;
     const shortest = curLon + ((((want[0] - curLon) % 360) + 540) % 360) - 180;
@@ -90,15 +103,27 @@ export default function Globe({
     const draw = () => {
       const R = size / 2 - 2;
 
-      // Ease toward the selected city.
-      const [tLon, tLat] = targetRef.current;
-      if (reduced) {
-        rotRef.current = [tLon, tLat];
-      } else {
+      if (draggingRef.current) {
+        // The pointer is driving; rotRef is updated by the move handler.
+      } else if (Math.abs(velRef.current[0]) > 0.02 || Math.abs(velRef.current[1]) > 0.02) {
+        // Coast after release, shedding speed each frame.
         rotRef.current = [
-          rotRef.current[0] + (tLon - rotRef.current[0]) * 0.05,
-          rotRef.current[1] + (tLat - rotRef.current[1]) * 0.05,
+          rotRef.current[0] + velRef.current[0],
+          clampLat(rotRef.current[1] + velRef.current[1]),
         ];
+        velRef.current = [velRef.current[0] * 0.94, velRef.current[1] * 0.94];
+        targetRef.current = rotRef.current;
+      } else {
+        // Ease toward the selected city.
+        const [tLon, tLat] = targetRef.current;
+        if (reduced) {
+          rotRef.current = [tLon, tLat];
+        } else {
+          rotRef.current = [
+            rotRef.current[0] + (tLon - rotRef.current[0]) * 0.05,
+            rotRef.current[1] + (tLat - rotRef.current[1]) * 0.05,
+          ];
+        }
       }
       const rotate = rotRef.current;
 
@@ -185,7 +210,47 @@ export default function Globe({
     };
   }, [events, active, land]);
 
+  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    draggingRef.current = true;
+    movedRef.current = 0;
+    velRef.current = [0, 0];
+    lastPtRef.current = { x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    onInteract?.();
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!draggingRef.current || !lastPtRef.current) return;
+
+    const dx = e.clientX - lastPtRef.current.x;
+    const dy = e.clientY - lastPtRef.current.y;
+    lastPtRef.current = { x: e.clientX, y: e.clientY };
+    movedRef.current += Math.abs(dx) + Math.abs(dy);
+
+    // Degrees per pixel, scaled so a drag across the globe is about a turn.
+    const k = 0.32;
+    const next: [number, number] = [
+      rotRef.current[0] + dx * k,
+      clampLat(rotRef.current[1] - dy * k),
+    ];
+    rotRef.current = next;
+    targetRef.current = next;
+    velRef.current = [dx * k, -dy * k];
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    lastPtRef.current = null;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
+
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // A drag should not also count as picking a marker.
+    if (movedRef.current > 6) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
@@ -205,9 +270,15 @@ export default function Globe({
   return (
     <canvas
       ref={canvasRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
       onClick={handleClick}
       aria-hidden="true"
-      className="aspect-square w-full cursor-pointer"
+      // pan-y keeps vertical page scrolling working over the globe on touch,
+      // while horizontal drags still spin it.
+      className="aspect-square w-full cursor-grab touch-pan-y active:cursor-grabbing"
     />
   );
 }

@@ -78,7 +78,12 @@ export default function WorldClock() {
         {/* Globe sits behind the copy on wide screens. */}
         <div className="relative mx-auto w-full max-w-[340px] lg:absolute lg:inset-x-0 lg:top-1/2 lg:max-w-none lg:-translate-y-1/2">
           <div className="mx-auto w-full max-w-[340px] lg:max-w-[554px]">
-            <Globe events={shown} active={safeIndex} onSelect={select} />
+            <Globe
+              events={shown}
+              active={safeIndex}
+              onSelect={select}
+              onInteract={() => setPaused(true)}
+            />
           </div>
         </div>
 
