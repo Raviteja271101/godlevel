@@ -74,9 +74,10 @@ export default function WorldClock() {
 
   return (
     <section className="hairline border-b border-hair gutter py-16 md:py-20">
-      <div className="relative mx-auto max-w-[1500px]">
-        {/* Globe sits behind the copy on wide screens. */}
-        <div className="relative mx-auto w-full max-w-[340px] lg:absolute lg:inset-x-0 lg:top-1/2 lg:max-w-none lg:-translate-y-1/2">
+      <div className="relative mx-auto flex max-w-[1500px] flex-col lg:block">
+        {/* Globe sits behind the copy on wide screens; on a phone it follows
+            the headline instead, so the wording is read first. */}
+        <div className="order-2 relative mx-auto w-full max-w-[340px] lg:absolute lg:inset-x-0 lg:top-1/2 lg:order-none lg:max-w-none lg:-translate-y-1/2">
           <div className="mx-auto w-full max-w-[340px] lg:max-w-[554px]">
             <Globe
               events={shown}
@@ -87,11 +88,13 @@ export default function WorldClock() {
           </div>
         </div>
 
-        {/* Copy layer */}
-        <div className="relative lg:pointer-events-none lg:grid lg:min-h-[620px] lg:grid-rows-[auto_1fr_auto]">
+        {/* Copy layer. The extra side inset is on top of the page gutter, so
+            the headline starts around a tenth of the way in and its longest
+            lines run over the globe, as on the reference. */}
+        <div className="order-1 relative lg:order-none lg:pointer-events-none lg:grid lg:min-h-[620px] lg:grid-rows-[auto_1fr_auto] lg:px-[7.8vw]">
           {/* Top row: headline left, clock right */}
           <div className="lg:flex lg:items-start lg:justify-between lg:gap-8">
-            <div className="lg:pointer-events-auto lg:max-w-[26ch]">
+            <div className="lg:pointer-events-auto lg:max-w-[40ch]">
               <h2 className="display t-statement">
                 Discover the world of {site.name} around the globe
               </h2>
