@@ -1,4 +1,4 @@
-# Slow Light
+# Godlevel
 
 A dark, cinematic site for a fictional independent record label and events studio —
 built as a structural counterpart to sites like noartmusic.com, with entirely original

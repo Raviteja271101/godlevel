@@ -11,7 +11,7 @@ export default function EventCTA({ event }: { event: Event }) {
   const day = event.date.replace(/-/g, "");
   const calendarHref =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-    `&text=${encodeURIComponent(`Slow Light ${event.city}`)}` +
+    `&text=${encodeURIComponent(`Godlevel ${event.city}`)}` +
     `&dates=${day}/${day}` +
     `&location=${encodeURIComponent(`${event.venue}, ${event.city}, ${event.country}`)}` +
     `&details=${encodeURIComponent(event.blurb)}`;

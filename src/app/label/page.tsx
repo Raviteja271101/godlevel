@@ -7,7 +7,7 @@ import { releases, roster } from "@/data/releases";
 
 export const metadata: Metadata = {
   title: "Label",
-  description: "The Slow Light catalogue and artist roster.",
+  description: "The Godlevel catalogue and artist roster.",
 };
 
 export default function LabelPage() {

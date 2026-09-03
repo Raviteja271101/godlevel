@@ -20,7 +20,7 @@ const stats = [
 const sections = [
   {
     id: "radio",
-    title: "Slow Light Radio",
+    title: "Godlevel Radio",
     body: "A monthly two-hour broadcast recorded wherever we happen to be. Mostly other peoples records, occasionally a rough mix of something that is not finished yet. Archived in full, free to stream.",
   },
   {
@@ -52,7 +52,7 @@ export default function AboutPage() {
               <CropMarks />
               <Image
                 src="/media/gal-03.jpg"
-                alt="Concrete architecture at a Slow Light venue"
+                alt="Concrete architecture at a Godlevel venue"
                 fill
                 sizes="(max-width: 1024px) 92vw, 46vw"
                 className="object-cover"

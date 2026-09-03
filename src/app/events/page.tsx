@@ -4,7 +4,7 @@ import { events } from "@/data/events";
 
 export const metadata: Metadata = {
   title: "Events",
-  description: "Every upcoming Slow Light show.",
+  description: "Every upcoming Godlevel show.",
 };
 
 export default function EventsPage() {

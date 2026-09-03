@@ -15,6 +15,19 @@ import { products } from "@/data/products";
 import { releases } from "@/data/releases";
 import { site } from "@/data/site";
 
+const aboutCopy = [
+  "We create spaces where people can come together, discover something new, and experience things differently.",
+  "The goal isn't simply to create events.",
+  "It's to create moments.",
+  "Moments that bring people together.",
+  "Moments that stay with you.",
+  "Something you experience with your friends.",
+  "Or someone you meet for the first time.",
+  "Godlevel is built around curiosity, connection, and the idea that everyone should have a place to belong.",
+  "Come as you are.",
+  "Leave with something more.",
+];
+
 const GRID_SIZES = "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw";
 
 export default function HomePage() {
@@ -37,7 +50,7 @@ export default function HomePage() {
               </Reveal>
               <Reveal delay={100}>
                 <SpreadWords
-                  text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it."
+                  text="An experience where people, culture and curiosity come together"
                   className="display mt-6 text-[2rem] leading-none sm:text-[2.5rem] lg:text-[2.65em]"
                 />
               </Reveal>
@@ -45,12 +58,13 @@ export default function HomePage() {
 
             <div className="lg:w-[40%]">
               <Reveal delay={160}>
-                <p className="measure lg:max-w-none">
-                  Every show is site-specific. We spend months negotiating with the owners of
-                  unusual buildings, then build a night around whatever we find inside. Nothing
-                  is templated, the running order is decided on the day, and the last set always
-                  outlasts the schedule.
-                </p>
+                <div className="space-y-4">
+                  {aboutCopy.map((line) => (
+                    <p key={line} className="measure lg:max-w-none">
+                      {line}
+                    </p>
+                  ))}
+                </div>
                 <Link href="/about" className="arrow-link mt-8 inline-block">
                   More about us
                 </Link>
@@ -60,7 +74,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Marquee items={["Six shows, six countries", "Season 09 on sale", "SL-004 out on vinyl", "Slow Light Radio"]} />
+      <Marquee items={["Six shows, six countries", "Season 09 on sale", "SL-004 out on vinyl", "Godlevel Radio"]} />
 
       {/* ---------- Upcoming events ---------- */}
       <section className="gutter py-16 md:py-24">

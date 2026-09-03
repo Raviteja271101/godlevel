@@ -6,7 +6,7 @@ import { products } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Shop",
-  description: "Slow Light merchandise, printed in small runs alongside each season.",
+  description: "Godlevel merchandise, printed in small runs alongside each season.",
 };
 
 export default function ShopPage() {

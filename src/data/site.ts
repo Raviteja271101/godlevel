@@ -1,13 +1,13 @@
 export const site = {
-  name: "Slow Light",
-  wordmark: "SLOW LIGHT",
-  tagline: "Slow down the light.",
+  name: "Godlevel",
+  wordmark: "GODLEVEL",
+  tagline: "Come as you are.",
   description:
-    "An independent record label and events studio staging pioneering electronic music in places that were never built to hold a party.",
+    "We create spaces where people can come together, discover something new, and experience things differently.",
   founded: 2017,
   base: "Lisbon — Tbilisi — Reykjavík",
-  email: "hello@slowlight.example",
-  press: "press@slowlight.example",
+  email: "hello@godlevel.example",
+  press: "press@godlevel.example",
 } as const;
 
 export const nav = [
@@ -48,7 +48,7 @@ export const footerColumns = [
       { label: "Upcoming events", href: "/events" },
       { label: "Past seasons", href: "/gallery" },
       { label: "Residencies", href: "/label" },
-      { label: "Slow Light Radio", href: "/about#radio" },
+      { label: "Godlevel Radio", href: "/about#radio" },
     ],
   },
   {

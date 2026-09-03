@@ -7,7 +7,7 @@ import { gallery } from "@/data/gallery";
 
 export const metadata: Metadata = {
   title: "Gallery",
-  description: "Photographs from past Slow Light seasons.",
+  description: "Photographs from past Godlevel seasons.",
 };
 
 export default function GalleryPage() {

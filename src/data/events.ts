@@ -25,7 +25,7 @@ export type Event = {
 
 export const events: Event[] = [
   {
-    slug: "slow-light-tbilisi",
+    slug: "godlevel-tbilisi",
     code: "SL:001",
     city: "Tbilisi",
     country: "Georgia",
@@ -48,7 +48,7 @@ export const events: Event[] = [
     ],
   },
   {
-    slug: "slow-light-reykjavik",
+    slug: "godlevel-reykjavik",
     code: "SL:002",
     city: "Reykjavík",
     country: "Iceland",
@@ -71,7 +71,7 @@ export const events: Event[] = [
     ],
   },
   {
-    slug: "slow-light-agafay",
+    slug: "godlevel-agafay",
     code: "SL:003",
     city: "Agafay",
     country: "Morocco",
@@ -94,7 +94,7 @@ export const events: Event[] = [
     ],
   },
   {
-    slug: "slow-light-naxos",
+    slug: "godlevel-naxos",
     code: "SL:004",
     city: "Naxos",
     country: "Greece",
@@ -117,7 +117,7 @@ export const events: Event[] = [
     ],
   },
   {
-    slug: "slow-light-tallinn",
+    slug: "godlevel-tallinn",
     code: "SL:005",
     city: "Tallinn",
     country: "Estonia",
@@ -140,7 +140,7 @@ export const events: Event[] = [
     ],
   },
   {
-    slug: "slow-light-valparaiso",
+    slug: "godlevel-valparaiso",
     code: "SL:006",
     city: "Valparaíso",
     country: "Chile",
