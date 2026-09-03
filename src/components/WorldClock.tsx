@@ -9,8 +9,13 @@ const ROTATE_MS = 6000;
 type Filter = "all" | "upcoming";
 
 /**
- * The globe section: a turning world with a marker per show, plus the
- * selected venue's live local time and coordinates.
+ * The globe section.
+ *
+ * Desktop stacks three layers over one another — the globe in the middle,
+ * copy across the top and bottom — so the headline runs over the sphere.
+ * A phone has no room for that, so the same pieces fall into one column:
+ * headline, filter, globe, standfirst. The time and coordinate readouts
+ * drop away there, as on the reference.
  */
 export default function WorldClock() {
   const [filter, setFilter] = useState<Filter>("all");
@@ -74,11 +79,10 @@ export default function WorldClock() {
 
   return (
     <section className="hairline border-b border-hair gutter py-16 md:py-20">
-      <div className="relative mx-auto flex max-w-[1500px] flex-col lg:block">
-        {/* Globe sits behind the copy on wide screens; on a phone it follows
-            the headline instead, so the wording is read first. */}
-        <div className="order-2 relative mx-auto w-full max-w-[340px] lg:absolute lg:inset-x-0 lg:top-1/2 lg:order-none lg:max-w-none lg:-translate-y-1/2">
-          <div className="mx-auto w-full max-w-[340px] lg:max-w-[554px]">
+      <div className="relative mx-auto flex max-w-[1500px] flex-col lg:block lg:min-h-[620px]">
+        {/* ---- Globe: in column on a phone, centred behind the copy above lg ---- */}
+        <div className="order-2 w-full lg:absolute lg:inset-0 lg:order-none lg:grid lg:place-items-center">
+          <div className="mx-auto w-full lg:max-w-[554px]">
             <Globe
               events={shown}
               active={safeIndex}
@@ -88,56 +92,50 @@ export default function WorldClock() {
           </div>
         </div>
 
-        {/* Copy layer. The extra side inset is on top of the page gutter, so
-            the headline starts around a tenth of the way in and its longest
-            lines run over the globe, as on the reference. */}
-        <div className="order-1 relative lg:order-none lg:pointer-events-none lg:grid lg:min-h-[620px] lg:grid-rows-[auto_1fr_auto] lg:px-[7.8vw]">
-          {/* Top row: headline left, clock right */}
-          <div className="lg:flex lg:items-start lg:justify-between lg:gap-8">
-            <div className="lg:pointer-events-auto lg:max-w-[40ch]">
-              <h2 className="display t-statement">
-                Discover the world of {site.name} around the globe
-              </h2>
-              <div className="mt-4 flex gap-2 lg:mt-6">
-                {filterLink("all", "All")}
-                <span className="opacity-40">/</span>
-                {filterLink("upcoming", "Upcoming")}
-              </div>
-            </div>
-
-            <div className="mt-8 lg:mt-0 lg:pointer-events-auto lg:text-right">
-              <p>
-                <span className="opacity-50">Local time:</span>{" "}
-                <span className="tabular-nums">{localTime}</span>
-              </p>
-              <p className="mt-1">
-                <span className="opacity-50">Time zone:</span> {offset}
-              </p>
+        {/* ---- Top copy: headline and filter, clock to the right ---- */}
+        <div className="order-1 lg:pointer-events-none lg:absolute lg:inset-x-0 lg:top-0 lg:order-none lg:flex lg:justify-between lg:gap-8 lg:px-[7.8vw]">
+          <div className="lg:pointer-events-auto lg:max-w-[40ch]">
+            <h2 className="display t-statement">
+              Discover the world of {site.name} around the globe
+            </h2>
+            <div className="mt-5 flex gap-2 lg:mt-6">
+              {filterLink("all", "All")}
+              <span className="opacity-40">/</span>
+              {filterLink("upcoming", "Upcoming")}
             </div>
           </div>
 
-          <div />
-
-          {/* Bottom row: coordinates left, blurb right */}
-          <div className="mt-10 lg:mt-0 lg:flex lg:items-end lg:justify-between lg:gap-8">
-            <div className="lg:pointer-events-auto">
-              <p>
-                <span className="opacity-50">Lat:</span> {formatLat(place.coords.lat)}
-              </p>
-              <p className="mt-1">
-                <span className="opacity-50">Lon:</span> {formatLon(place.coords.lon)}
-              </p>
-              <p className="mt-3">
-                {place.code} &mdash; {place.city}, {place.country}
-              </p>
-            </div>
-
-            <p className="measure mt-8 lg:mt-0 lg:pointer-events-auto lg:text-right">
-              {site.name} moves from city to city, taking its shows to places that were never
-              built for them. Every location changes the night: a different room, a different
-              crowd, the same intent.
+          {/* Readouts are desktop-only; a phone drops them. */}
+          <div className="hidden lg:pointer-events-auto lg:block lg:text-right">
+            <p>
+              <span className="opacity-50">Local time:</span>{" "}
+              <span className="tabular-nums">{localTime}</span>
+            </p>
+            <p className="mt-1">
+              <span className="opacity-50">Time zone:</span> {offset}
             </p>
           </div>
+        </div>
+
+        {/* ---- Bottom copy: coordinates left, standfirst right ---- */}
+        <div className="order-3 mt-10 lg:pointer-events-none lg:absolute lg:inset-x-0 lg:bottom-0 lg:order-none lg:mt-0 lg:flex lg:items-end lg:justify-between lg:gap-8 lg:px-[7.8vw]">
+          <div className="hidden lg:pointer-events-auto lg:block">
+            <p>
+              <span className="opacity-50">Lat:</span> {formatLat(place.coords.lat)}
+            </p>
+            <p className="mt-1">
+              <span className="opacity-50">Lon:</span> {formatLon(place.coords.lon)}
+            </p>
+            <p className="mt-3">
+              {place.code} &mdash; {place.city}, {place.country}
+            </p>
+          </div>
+
+          <p className="measure lg:pointer-events-auto lg:text-right">
+            {site.name} moves from city to city, taking its shows to places that were never
+            built for them. Every location changes the night: a different room, a different
+            crowd, the same intent.
+          </p>
         </div>
       </div>
     </section>
