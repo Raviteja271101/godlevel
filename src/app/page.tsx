@@ -21,25 +21,40 @@ export default function HomePage() {
     <>
       <Hero />
 
-      {/* ---------- Statement ---------- */}
+      {/* ---------- Statement ----------
+          Statement on the left, set justified in a narrow measure; supporting
+          copy and the link sit off to the right. The section takes the same
+          deeper side inset as the globe. */}
       <section className="gutter py-16 md:py-24">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
-          <Reveal>
-            <p className="eyebrow">
-              <ScrambleText text={`About ${site.name}`} trigger="view" />
-            </p>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <div>
-              <p className="display t-statement">
-                <SplitWords text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it." stagger={26} />
-              </p>
-              <Link href="/about" className="arrow-link mt-8 inline-block">
-                More about us
-              </Link>
+        <div className="lg:px-[7.8vw]">
+          <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-0">
+            <div className="lg:w-[38%]">
+              <Reveal>
+                <p className="eyebrow">
+                  <ScrambleText text={`About ${site.name}`} trigger="view" />
+                </p>
+              </Reveal>
+              <Reveal delay={100}>
+                <p className="display mt-6 text-justify text-[2rem] leading-none sm:text-[2.5rem] lg:text-[2.65em]">
+                  <SplitWords text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it." stagger={26} />
+                </p>
+              </Reveal>
             </div>
-          </Reveal>
+
+            <div className="lg:w-[40%]">
+              <Reveal delay={160}>
+                <p className="measure lg:max-w-none">
+                  Every show is site-specific. We spend months negotiating with the owners of
+                  unusual buildings, then build a night around whatever we find inside. Nothing
+                  is templated, the running order is decided on the day, and the last set always
+                  outlasts the schedule.
+                </p>
+                <Link href="/about" className="arrow-link mt-8 inline-block">
+                  More about us
+                </Link>
+              </Reveal>
+            </div>
+          </div>
         </div>
       </section>
 
