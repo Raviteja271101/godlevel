@@ -22,7 +22,7 @@ export default function HomePage() {
       <Hero />
 
       {/* ---------- Statement ---------- */}
-      <section className="px-6 py-16 md:px-8 md:py-24">
+      <section className="gutter py-16 md:py-24">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
           <Reveal>
             <p className="eyebrow">
@@ -46,7 +46,7 @@ export default function HomePage() {
       <Marquee items={["Six shows, six countries", "Season 09 on sale", "SL-004 out on vinyl", "Slow Light Radio"]} />
 
       {/* ---------- Upcoming events ---------- */}
-      <section className="px-6 py-16 md:px-8 md:py-24">
+      <section className="gutter py-16 md:py-24">
         <Reveal>
           <div className="flex items-baseline justify-between gap-6">
             <p className="eyebrow">
@@ -70,7 +70,7 @@ export default function HomePage() {
       <WorldClock />
 
       {/* ---------- Label ---------- */}
-      <section className="px-6 py-16 md:px-8 md:py-24">
+      <section className="gutter py-16 md:py-24">
         <Reveal>
           <div className="flex items-baseline justify-between gap-6">
             <p className="eyebrow">
@@ -110,7 +110,7 @@ export default function HomePage() {
       </section>
 
       {/* ---------- Shop ---------- */}
-      <section className="hairline border-t border-hair px-6 py-16 md:px-8 md:py-24">
+      <section className="hairline border-t border-hair gutter py-16 md:py-24">
         <Reveal>
           <div className="flex items-baseline justify-between gap-6">
             <p className="eyebrow">

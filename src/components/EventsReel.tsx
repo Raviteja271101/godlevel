@@ -106,7 +106,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
       </div>
 
       {/* ---- Mobile heading, standing in for the rails ---- */}
-      <div className="flex items-baseline justify-between gap-4 px-6 pt-28 pb-6 lg:hidden">
+      <div className="flex items-baseline justify-between gap-4 gutter pt-28 pb-6 lg:hidden">
         <p className="eyebrow">Upcoming events</p>
         <p className="opacity-50">[{events.length}]</p>
       </div>
@@ -119,7 +119,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
             ref={(el) => {
               slideRefs.current[i] = el;
             }}
-            className="grid place-items-center px-6 pb-14 lg:h-[100svh] lg:px-0 lg:pb-0"
+            className="grid place-items-center gutter pb-14 lg:h-[100svh] lg:px-0 lg:pb-0"
           >
             <Link
               href={`/events/${event.slug}`}

@@ -93,13 +93,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       {/* ---------- Sticky meta ---------- */}
       {/* Pinned just under the fixed header so the two never collide. */}
       <div className="sticky top-[68px] z-40 border-b border-hair bg-paper">
-        <div className="grid grid-cols-1 gap-4 px-6 py-4 sm:grid-cols-3 md:px-8">
+        <div className="grid grid-cols-1 gap-4 gutter py-4 sm:grid-cols-3">
           <Meta event={event} tone="light" />
         </div>
       </div>
 
       {/* ---------- Description + artwork ---------- */}
-      <section className="px-6 py-16 md:px-8 md:py-24">
+      <section className="gutter py-16 md:py-24">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <div className="space-y-6">
@@ -133,7 +133,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       </section>
 
       {/* ---------- Line-up ---------- */}
-      <section id="tickets" className="border-t border-hair px-6 py-16 md:px-8 md:py-24">
+      <section id="tickets" className="border-t border-hair gutter py-16 md:py-24">
         <Reveal>
           <p className="eyebrow">Line-up</p>
         </Reveal>
@@ -145,7 +145,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       </section>
 
       {/* ---------- Other shows ---------- */}
-      <section className="border-t border-hair px-6 py-16 md:px-8 md:py-20">
+      <section className="border-t border-hair gutter py-16 md:py-20">
         <div className="flex items-baseline justify-between gap-6">
           <p className="eyebrow">More shows</p>
           <Link href="/events" className="arrow-link">

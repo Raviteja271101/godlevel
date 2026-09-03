@@ -4,7 +4,7 @@ import { footerColumns, site, socials } from "@/data/site";
 
 export default function SiteFooter() {
   return (
-    <footer className="hairline bg-night px-6 py-14 text-white md:px-8 md:py-20">
+    <footer className="hairline bg-night gutter py-14 text-white md:py-20">
       <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
         <div>
           <p className="display t-statement">{site.tagline}</p>

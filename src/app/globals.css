@@ -114,6 +114,12 @@
     margin-left: 0.5em;
   }
 
+  /* Page gutter. Fluid above roughly 720px and floored at 20px below it,
+     matching the reference: 20px at 390, 40px at 1440, 53px at 1920. */
+  .gutter {
+    padding-inline: max(20px, 2.78vw);
+  }
+
   .hairline {
     border-top: 1px solid var(--color-hair);
   }

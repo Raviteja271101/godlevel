@@ -45,7 +45,7 @@ export default function AboutPage() {
     <>
       <PageHeader eyebrow={`Est. ${site.founded} — ${site.base}`} title="About" intro={site.description} />
 
-      <section className="px-6 pb-20 md:px-8">
+      <section className="gutter pb-20">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <div className="relative aspect-[4/5] overflow-hidden bg-[#efefef]">
@@ -82,7 +82,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="hairline border-y border-hair px-6 py-14 md:px-8">
+      <section className="hairline border-y border-hair gutter py-14">
         <div className="grid grid-cols-2 gap-y-10 md:grid-cols-4">
           {stats.map((stat, i) => (
             <Reveal key={stat.label} delay={i * 80}>
@@ -93,7 +93,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="px-6 py-16 md:px-8 md:py-24">
+      <section className="gutter py-16 md:py-24">
         <div className="grid gap-x-12 gap-y-12 md:grid-cols-2">
           {sections.map((section, i) => (
             <Reveal key={section.id} delay={(i % 2) * 90}>

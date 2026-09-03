@@ -19,7 +19,7 @@ export default function GalleryPage() {
         intro="Photographs from past seasons. No phones on the floor, so most of these were taken by people who were working."
       />
 
-      <section className="px-6 pb-24 md:px-8">
+      <section className="gutter pb-24">
         <div className="columns-1 gap-6 sm:columns-2 lg:columns-3">
           {gallery.map((shot, i) => (
             <Reveal key={shot.src} delay={(i % 3) * 90} className="mb-10 break-inside-avoid">

@@ -24,7 +24,7 @@ export default function SiteHeader() {
           live on the header itself — on a child it would only ever difference
           against the header's own empty backdrop, never the page beneath. */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference">
-        <div className="flex items-start justify-between px-6 py-5 md:px-8">
+        <div className="flex items-start justify-between gutter py-5">
           <Link href="/" className="pointer-events-auto display text-2xl leading-none md:text-3xl">
             <ScrambleText text={site.wordmark} />
           </Link>
@@ -63,7 +63,7 @@ export default function SiteHeader() {
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <div className="flex h-full flex-col justify-between px-6 pt-24 pb-10">
+        <div className="flex h-full flex-col justify-between gutter pt-24 pb-10">
           <nav className="flex flex-col">
             {navGroups.flat().map((item, i) => (
               <Link key={item.label} href={item.href} className="hairline flex items-baseline gap-4 py-4">

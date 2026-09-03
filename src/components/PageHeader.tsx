@@ -12,7 +12,7 @@ export default function PageHeader({
   intro: string;
 }) {
   return (
-    <header className="px-6 pt-32 pb-14 md:px-8 md:pt-40 md:pb-20">
+    <header className="gutter pt-32 pb-14 md:pt-40 md:pb-20">
       <Reveal>
         <p className="eyebrow">
           <ScrambleText text={eyebrow} trigger="view" />

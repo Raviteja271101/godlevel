@@ -18,7 +18,7 @@ export default function ShopPage() {
         intro="Printed in small runs alongside each season. Once a run is gone we do not reprint it. Ships worldwide within five working days."
       />
 
-      <section className="px-6 pb-24 md:px-8">
+      <section className="gutter pb-24">
         <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product, i) => (
             <Reveal key={product.name} delay={(i % 3) * 80}>

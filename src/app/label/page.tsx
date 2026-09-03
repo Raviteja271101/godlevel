@@ -19,7 +19,7 @@ export default function LabelPage() {
         intro="Records made on location and pressed in short runs. We record the shows we put on, and release what survives the edit."
       />
 
-      <section className="px-6 pb-20 md:px-8">
+      <section className="gutter pb-20">
         <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {releases.map((release, i) => (
             <Reveal key={release.catalogue} delay={i * 80}>
@@ -51,7 +51,7 @@ export default function LabelPage() {
         </div>
       </section>
 
-      <section id="roster" className="hairline scroll-mt-24 border-t border-hair px-6 py-16 md:px-8 md:py-24">
+      <section id="roster" className="hairline scroll-mt-24 border-t border-hair gutter py-16 md:py-24">
         <Reveal>
           <p className="eyebrow">Artists</p>
           <h2 className="display t-statement mt-4">Roster</h2>

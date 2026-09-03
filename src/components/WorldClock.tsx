@@ -73,7 +73,7 @@ export default function WorldClock() {
   );
 
   return (
-    <section className="hairline border-b border-hair px-6 py-16 md:px-8 md:py-20">
+    <section className="hairline border-b border-hair gutter py-16 md:py-20">
       <div className="relative mx-auto max-w-[1500px]">
         {/* Globe sits behind the copy on wide screens. */}
         <div className="relative mx-auto w-full max-w-[340px] lg:absolute lg:inset-x-0 lg:top-1/2 lg:max-w-none lg:-translate-y-1/2">
