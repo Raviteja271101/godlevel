@@ -8,6 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
 import SplitWords from "@/components/SplitWords";
+import SpreadWords from "@/components/SpreadWords";
 import WorldClock from "@/components/WorldClock";
 import { events } from "@/data/events";
 import { products } from "@/data/products";
@@ -35,9 +36,10 @@ export default function HomePage() {
                 </p>
               </Reveal>
               <Reveal delay={100}>
-                <p className="display mt-6 text-justify text-[2rem] leading-none sm:text-[2.5rem] lg:text-[2.65em]">
-                  <SplitWords text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it." stagger={26} />
-                </p>
+                <SpreadWords
+                  text="We put pioneering music in rooms that were built for something else entirely, and we take our time about it."
+                  className="display mt-6 text-[2rem] leading-none sm:text-[2.5rem] lg:text-[2.65em]"
+                />
               </Reveal>
             </div>
 

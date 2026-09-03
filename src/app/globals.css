@@ -228,6 +228,14 @@ html:not([data-loaded]) [data-reveal],
 html:not([data-loaded]) .splitwords .word { transition: none !important; }
 
 .scramble-char { display: inline-block; white-space: pre; }
+
+/* Words that slide between packed and justified positions on scroll.
+   Inline-block so the transform applies; the spaces between them stay as
+   text nodes, which is what justification actually stretches. */
+.spread-word {
+  display: inline-block;
+  will-change: transform;
+}
 .scramble-char[data-scrambling="true"] { color: var(--color-scramble); }
 
 .page-wipe {
