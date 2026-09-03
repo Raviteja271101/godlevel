@@ -28,26 +28,19 @@
   body {
     background: var(--color-paper);
     color: var(--color-ink);
-    /* Everything is mono, uppercase, 1.2 line-height — as on the reference,
-       which steps UI text 14 / 16 / 18px across its three breakpoints. */
+    /* Everything is mono, uppercase, 1.2 line-height. Measured off the
+       reference, whose UI text computes to 12px (11.26px on a laptop). */
     font-family: var(--font-mono-ui);
-    font-size: 14px;
-    line-height: 16.8px;
+    font-size: 11px;
+    line-height: 13.2px;
     text-transform: uppercase;
     overflow-x: hidden;
   }
 
   @media (min-width: 768px) {
     body {
-      font-size: 16px;
-      line-height: 19.2px;
-    }
-  }
-
-  @media (min-width: 992px) {
-    body {
-      font-size: 18px;
-      line-height: 21.6px;
+      font-size: 12px;
+      line-height: 14.4px;
     }
   }
 
@@ -76,17 +69,22 @@
     text-transform: uppercase;
   }
 
-  /* Type ladder — the reference tops its pages out at one step: 2em, going
-     3em from 992px up. Held in em so it follows the 14 / 16 / 18px body
-     base rather than a fixed root, exactly as the reference does. */
+  /* Type ladder — pinned to the reference's measured 12px UI text, which its
+     headings run to 4x, stepping down on narrower screens. */
   .t-statement {
-    font-size: 2em;
+    font-size: 28px;
     line-height: 1;
+  }
+
+  @media (min-width: 768px) {
+    .t-statement {
+      font-size: 32px;
+    }
   }
 
   @media (min-width: 992px) {
     .t-statement {
-      font-size: 3em;
+      font-size: 48px;
     }
   }
 
@@ -127,9 +125,26 @@
   .no-bar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-bar::-webkit-scrollbar { display: none; }
 
+  /* Hovering one card in a list dims its siblings. The reference does this in
+     JS; a :has() rule needs no script. Scoped to the anchors rather than the
+     grid cells so it stays clear of the reveal animation on the wrappers. */
+  .card-list a {
+    transition: opacity 0.45s var(--ease-out-expo);
+  }
+
+  .card-list:has(a:hover) a:not(:hover) {
+    opacity: 0.3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-list a {
+      transition: none;
+    }
+  }
+
   /* Justified mono paragraph block. */
-  /* Body copy sits well below UI text on phones — 12px on the reference —
-     then catches up with the rest of the page from tablet width. */
+  /* Paragraphs run a step above the UI text: 12px on phones, 15px from
+     tablet width up, matching the reference. */
   .measure {
     max-width: 44ch;
     font-size: 12px;
@@ -140,9 +155,9 @@
 
   @media (min-width: 768px) {
     .measure {
-      /* Tracks the body step, so it stays in ratio at every breakpoint. */
-      font-size: 1em;
-      line-height: 1.2;
+      /* Paragraphs sit a step above the UI text, as on the reference. */
+      font-size: 15px;
+      line-height: 18px;
     }
   }
 }
@@ -298,4 +313,80 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   .page-wipe { display: none; }
   .page-enter { animation: none; }
   .cursor-bubble { display: none; }
+}
+
+/* ------------------------------------------------------------------
+   First load
+   The hero opens as a small centred box that grows with the loader count,
+   then expands to full bleed when `data-loaded` lands. The hero lifts above
+   the loader and supplies the pale ground, so the readout can sit over it.
+   ------------------------------------------------------------------ */
+.hero-media {
+  transform-origin: center;
+}
+
+/* No transition while counting: rAF already animates --load-scale every frame,
+   so a transition here only lags it. It applies to the final expansion. */
+html[data-loaded] .hero-media {
+  transition: transform 1.2s var(--ease-out-expo);
+}
+
+.hero-aside {
+  transition: opacity 0.7s var(--ease-out-expo) 0.4s;
+}
+
+html:not([data-loaded]) .hero {
+  z-index: 101;
+  background: var(--color-paper);
+}
+
+html:not([data-loaded]) .hero-media {
+  transform: scale(var(--load-scale, 0.12));
+}
+
+/* Frame for the loading box. Sized from the same variable that drives the
+   scale, but never transformed, so the brackets stay hairline-thin. */
+.hero-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--load-scale, 0.12) * 100% + 1.25rem);
+  height: calc(var(--load-scale, 0.12) * 100% + 1.25rem);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  /* .marks paints in currentColor, and the hero sets text-white — invisible
+     against the pale loading ground, so force ink here. */
+  color: var(--color-ink);
+}
+
+/* Once open, ViewportMarks carry the frame. */
+html[data-loaded] .hero-frame {
+  display: none;
+}
+
+html:not([data-loaded]) .hero-aside {
+  opacity: 0;
+}
+
+/* Nothing should move while the intro plays. */
+html:not([data-loaded]) body {
+  overflow: hidden;
+}
+
+/* The loader screen shows only the box and the readout, so the nav and the
+   viewport frame stay out until the hero has opened. */
+html:not([data-loaded]) .site-header,
+html:not([data-loaded]) .viewport-marks {
+  opacity: 0;
+}
+
+.site-header {
+  transition: opacity 0.6s var(--ease-out-expo) 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-media,
+  .hero-aside {
+    transition: none;
+  }
 }

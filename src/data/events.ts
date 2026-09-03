@@ -1,11 +1,15 @@
 export type Event = {
   slug: string;
+  /** Card title. Falls back to the wordmark plus city when absent. */
+  name?: string;
   code: string;
   city: string;
   country: string;
   venue: string;
   /** ISO date — formatted at render time so the data stays locale-agnostic. */
   date: string;
+  /** Second date, for events that run over two days. */
+  dateEnd?: string;
   /** Doors to close, as shown on the detail page. */
   time: string;
   /** IANA zone, used by the "Around the World" clock. */
@@ -26,11 +30,12 @@ export type Event = {
 export const events: Event[] = [
   {
     slug: "godlevel-tbilisi",
+    name: "Workshops",
     code: "SL:001",
     city: "Tbilisi",
     country: "Georgia",
     venue: "The Sulphur Baths",
-    date: "2026-10-03",
+    date: "2026-12-10",
     time: "22:00 - 10:00",
     tz: "Asia/Tbilisi",
     coords: { lat: 41.6938, lon: 44.8015 },
@@ -49,11 +54,12 @@ export const events: Event[] = [
   },
   {
     slug: "godlevel-reykjavik",
+    name: "RunClub",
     code: "SL:002",
     city: "Reykjavík",
     country: "Iceland",
     venue: "Geothermal Hall",
-    date: "2026-10-24",
+    date: "2026-12-11",
     time: "20:00 - 11:00",
     tz: "Atlantic/Reykjavik",
     coords: { lat: 64.1466, lon: -21.9426 },
@@ -72,11 +78,13 @@ export const events: Event[] = [
   },
   {
     slug: "godlevel-agafay",
+    name: "Godlevel Festival",
     code: "SL:003",
     city: "Agafay",
     country: "Morocco",
     venue: "The Desert Floor",
-    date: "2026-11-07",
+    date: "2026-12-12",
+    dateEnd: "2026-12-13",
     time: "18:00 - 06:00",
     tz: "Africa/Casablanca",
     coords: { lat: 31.4013, lon: -8.2201 },

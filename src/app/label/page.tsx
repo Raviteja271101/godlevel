@@ -6,7 +6,7 @@ import Reveal from "@/components/Reveal";
 import { releases, roster } from "@/data/releases";
 
 export const metadata: Metadata = {
-  title: "Label",
+  title: "Godlevel Collective",
   description: "The Godlevel catalogue and artist roster.",
 };
 
@@ -15,7 +15,7 @@ export default function LabelPage() {
     <>
       <PageHeader
         eyebrow="Catalogue & roster"
-        title="The Label"
+        title="Godlevel Collective"
         intro="Records made on location and pressed in short runs. We record the shows we put on, and release what survives the edit."
       />
 

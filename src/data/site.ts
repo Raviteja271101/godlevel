@@ -14,7 +14,7 @@ export const site = {
 
 export const nav = [
   { label: "Events", href: "/events" },
-  { label: "Label", href: "/label" },
+  { label: "Godlevel Collective", href: "/label" },
   { label: "Gallery", href: "/gallery" },
   { label: "Shop", href: "/shop" },
   { label: "About", href: "/about" },
@@ -27,7 +27,7 @@ export const navGroups: { label: string; href: string; count?: number }[][] = [
     { label: "Shop", href: "/shop" },
   ],
   [
-    { label: "Label", href: "/label" },
+    { label: "Godlevel Collective", href: "/label" },
     { label: "Gallery", href: "/gallery" },
   ],
   [
@@ -38,37 +38,41 @@ export const navGroups: { label: string; href: string; count?: number }[][] = [
 
 export const socials = [
   { label: "Instagram", href: "https://instagram.com" },
-  { label: "SoundCloud", href: "https://soundcloud.com" },
-  { label: "Bandcamp", href: "https://bandcamp.com" },
   { label: "YouTube", href: "https://youtube.com" },
 ] as const;
 
 export const footerColumns = [
   {
-    title: "Experience",
+    title: "Explore",
     links: [
-      { label: "Upcoming events", href: "/events" },
-      { label: "Past seasons", href: "/gallery" },
-      { label: "Residencies", href: "/label" },
-      { label: "Godlevel Radio", href: "/about#radio" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About us", href: "/about" },
-      { label: "The label", href: "/label" },
-      { label: "Artist roster", href: "/label#roster" },
-      { label: "Press kit", href: "/about#press" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { label: "Tickets & entry", href: "/events" },
-      { label: "Accessibility", href: "/about#access" },
-      { label: "Safer spaces", href: "/about#safer" },
-      { label: "Shipping & returns", href: "/shop" },
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" },
+      { label: "Experiences", href: "/events" },
+      { label: "Collective", href: "/label" },
+      { label: "Partners", href: "/about#press" },
+      { label: "Contact", href: "/about#contact" },
     ],
   },
 ] as const;
+
+/** Centred call to action above the footer columns. */
+export const footerCta = {
+  headline: "Come find your level.",
+  line: "Godlevel is moving. Come be part of it.",
+  action: { label: "Join Godlevel", href: "/about" },
+} as const;
+
+/** One row per line, broken as drawn in the footer layout. */
+export const footerBlurb = [
+  "A platform for exploring",
+  "culture, community, and",
+  "new experiences",
+] as const;
+
+export const contact = {
+  email: "hello@godlevel.in",
+  phone: "+91 XXXXX XXXXX",
+} as const;
+
+/** One line per row, as printed in the footer. */
+export const address = ["Godlevel", "[Full Address]", "Mumbai, Maharashtra, India"] as const;

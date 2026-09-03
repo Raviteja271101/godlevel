@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { site } from "@/data/site";
 
 const DURATION = 1500;
+
+/** Hero box size at 0% and at 100%, before it expands out to full bleed. */
+const SCALE_FROM = 0.12;
+const SCALE_TO = 0.44;
 
 /** Marks the document ready so above-the-fold reveals may start. */
 const markLoaded = () => document.documentElement.setAttribute("data-loaded", "");
 
 /**
- * First-visit loader: wordmark, a thin determinate bar and a percentage
- * counter, then the whole panel slides away. Repeat visits in the same
- * session skip straight past it.
+ * First-visit loader. The hero video carries the animation — it opens as a
+ * small centred box and grows with the count, then expands to full bleed once
+ * this panel clears. Repeat visits in the same session skip straight past it.
  */
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
@@ -19,6 +22,14 @@ export default function Preloader() {
   const [gone, setGone] = useState(false);
 
   useEffect(() => {
+    const root = document.documentElement;
+
+    /* A late restore can still fire as images grow the page, so hold the top
+       while the intro runs. An anchored URL keeps its target. */
+    const pinTop = () => {
+      if (!window.location.hash) window.scrollTo(0, 0);
+    };
+    pinTop();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (sessionStorage.getItem("sl:loaded") || reduced) {
@@ -35,6 +46,7 @@ export default function Preloader() {
       // Expo-out, so the count decelerates into 100.
       const eased = 1 - Math.pow(2, -10 * t);
       setProgress(Math.round(eased * 100));
+      root.style.setProperty("--load-scale", String(SCALE_FROM + eased * (SCALE_TO - SCALE_FROM)));
 
       if (t < 1) {
         raf = requestAnimationFrame(tick);
@@ -44,7 +56,9 @@ export default function Preloader() {
       setProgress(100);
       sessionStorage.setItem("sl:loaded", "1");
       setLeaving(true);
+      // Dropping data-loaded in releases the scale, so the box grows to full.
       markLoaded();
+      pinTop();
       window.setTimeout(() => setGone(true), 900);
     };
 
@@ -55,21 +69,21 @@ export default function Preloader() {
   if (gone) return null;
 
   return (
+    /* Transparent: the hero sits above this and supplies the pale ground, so
+       only the readout is drawn here. */
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-night text-white transition-transform duration-[900ms] ease-[cubic-bezier(0.76,0,0.24,1)]"
-      style={{ transform: leaving ? "translateY(-100%)" : "none" }}
+      className="pointer-events-none fixed inset-0 z-[102] flex flex-col items-center justify-end pb-[16vh] text-ink transition-opacity duration-500"
+      style={{ opacity: leaving ? 0 : 1 }}
     >
-      <p className="display t-statement">{site.wordmark}</p>
+      <p className="tabular-nums font-medium">{progress}%</p>
 
-      <div className="mt-8 h-px w-[170px] bg-white/25">
+      <div className="mt-3 h-px w-[170px] bg-ink/25">
         <div
-          className="h-px bg-white"
+          className="h-px bg-ink"
           style={{ width: `${progress}%`, transition: "width 120ms linear" }}
         />
       </div>
-
-      <p className="mt-3 tabular-nums opacity-70">{progress}%</p>
     </div>
   );
 }

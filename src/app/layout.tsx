@@ -39,6 +39,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${archivo.variable} ${chivoMono.variable}`}>
       <body className="antialiased">
+        {/* Runs at parse time, ahead of the browser restoring a previous
+            scroll position — the intro must start at the top of the hero. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if("scrollRestoration" in history){history.scrollRestoration="manual"}`,
+          }}
+        />
+
         {/* Without JS nothing should stay hidden behind a reveal. */}
         <noscript>
           <style>{`[data-reveal],.splitwords .word{opacity:1!important;transform:none!important}`}</style>

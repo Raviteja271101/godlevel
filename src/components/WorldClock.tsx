@@ -132,9 +132,8 @@ export default function WorldClock() {
           </div>
 
           <p className="measure lg:pointer-events-auto lg:text-right">
-            {site.name} moves from city to city, taking its shows to places that were never
-            built for them. Every location changes the night: a different room, a different
-            crowd, the same intent.
+            Moving from city to city, every destination brings a different energy, a
+            different perspective, and a new story to the experience.
           </p>
         </div>
       </div>

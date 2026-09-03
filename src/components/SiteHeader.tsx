@@ -23,7 +23,7 @@ export default function SiteHeader() {
       {/* `position: fixed` always opens a stacking context, so the blend has to
           live on the header itself — on a child it would only ever difference
           against the header's own empty backdrop, never the page beneath. */}
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference">
+      <header className="site-header pointer-events-none fixed inset-x-0 top-0 z-50 text-white mix-blend-difference">
         <div className="flex items-start justify-between gutter py-5">
           <Link href="/" className="pointer-events-auto display text-2xl leading-none md:text-3xl">
             <ScrambleText text={site.wordmark} />

@@ -4,14 +4,14 @@ import CropMarks from "@/components/CropMarks";
 import EventCard from "@/components/EventCard";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
-import ProductCard from "@/components/ProductCard";
+// import ProductCard from "@/components/ProductCard"; // restore with the shop section
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
 import SplitWords from "@/components/SplitWords";
 import SpreadWords from "@/components/SpreadWords";
 import WorldClock from "@/components/WorldClock";
 import { events } from "@/data/events";
-import { products } from "@/data/products";
+// import { products } from "@/data/products"; // restore with the shop section
 import { releases } from "@/data/releases";
 import { site } from "@/data/site";
 
@@ -99,7 +99,7 @@ export default function HomePage() {
           </div>
         </Reveal>
 
-        <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="card-list mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {events.slice(0, 3).map((event, i) => (
             <Reveal key={event.code} delay={i * 90}>
               <EventCard event={event} index={i} sizes={GRID_SIZES} />
@@ -110,17 +110,15 @@ export default function HomePage() {
 
       <WorldClock />
 
-      {/* ---------- Label ---------- */}
+      {/* ---------- Godlevel Collective ---------- */}
       <section className="gutter py-16 md:py-24">
         <Reveal>
-          <div className="flex items-baseline justify-between gap-6">
-            <p className="eyebrow">
-              <ScrambleText text="Recordings" trigger="view" />
-            </p>
-            <Link href="/label" className="arrow-link">
-              Full catalogue
-            </Link>
-          </div>
+          <p className="eyebrow">
+            <ScrambleText text="Godlevel Collective" trigger="view" />
+          </p>
+          <p className="measure mt-3">
+            A collective of people pushing their craft, culture, and communities forward.
+          </p>
         </Reveal>
 
         <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -148,9 +146,21 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
+
+        {/* Sits under the cards, right-aligned. */}
+        <Reveal>
+          <div className="mt-8 flex justify-end">
+            <Link href="/label" className="arrow-link">
+              Join the collective
+            </Link>
+          </div>
+        </Reveal>
       </section>
 
-      {/* ---------- Shop ---------- */}
+      {/* ---------- Shop ----------
+      Commented out on request. To restore, uncomment this block along with
+      the ProductCard and products imports at the top of the file.
+
       <section className="hairline border-t border-hair gutter py-16 md:py-24">
         <Reveal>
           <div className="flex items-baseline justify-between gap-6">
@@ -171,6 +181,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      */}
     </>
   );
 }

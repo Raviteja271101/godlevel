@@ -1,49 +1,88 @@
 import Link from "next/link";
-import Newsletter from "./Newsletter";
-import { footerColumns, site, socials } from "@/data/site";
+import ScrambleText from "./ScrambleText";
+import { address, contact, footerBlurb, footerColumns, footerCta, site, socials } from "@/data/site";
 
 export default function SiteFooter() {
   return (
-    <footer className="hairline bg-night gutter py-14 text-white md:py-20">
-      <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
-        <div>
-          <p className="display t-statement">{site.tagline}</p>
-          <div className="mt-10">
-            <Newsletter />
+    <footer className="hairline bg-night gutter py-14 text-white">
+      {/* Centred call to action. */}
+      <div className="text-center">
+        <p className="font-medium">{footerCta.headline}</p>
+        <p className="font-medium">{footerCta.line}</p>
+        <Link
+          href={footerCta.action.href}
+          className="mt-5 inline-block text-scramble transition-opacity hover:opacity-70"
+        >
+          <ScrambleText text={footerCta.action.label} />
+        </Link>
+      </div>
+
+      {/* Identity and contact left, explore centred, address and socials right.
+          Every link here scrambles on hover, as the header nav does. */}
+      <div className="mt-16 grid gap-12 md:grid-cols-3">
+        <div className="flex flex-col justify-between gap-12">
+          <div>
+            <h3>{site.wordmark}</h3>
+            <div className="mt-2">
+              {footerBlurb.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3>Contact</h3>
+            <p className="mt-2">
+              <a href={`mailto:${contact.email}`} className="transition-opacity hover:opacity-60">
+                <ScrambleText text={contact.email} />
+              </a>
+            </p>
+            <p>{contact.phone}</p>
           </div>
         </div>
 
-        <div className="grid gap-10 sm:grid-cols-3">
-          {footerColumns.map((col) => (
-            <div key={col.title}>
-              <h3 className="opacity-60">[{col.title.toUpperCase()}]</h3>
-              <ul className="mt-4 space-y-1">
-                {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="transition-opacity hover:opacity-60">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
+        {footerColumns.map((col) => (
+          <div key={col.title} className="md:text-center">
+            <h3>{col.title}</h3>
+            <ul className="mt-2 space-y-1">
+              {col.links.map((link) => (
+                <li key={link.label}>
+                  <Link href={link.href} className="transition-opacity hover:opacity-60">
+                    <ScrambleText text={link.label} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
 
-      <div className="mt-16 flex flex-col gap-4 border-t border-white/20 pt-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap gap-x-6 gap-y-1">
-          {socials.map((s) => (
-            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-60">
-              {s.label}
-            </a>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-1 opacity-60">
-          <a href={`mailto:${site.email}`}>{site.email}</a>
-          <p>
-            &copy; {site.founded}&ndash;{new Date().getFullYear()} {site.name}
-          </p>
+        <div className="flex flex-col justify-between gap-12 md:text-right">
+          <div>
+            <h3>Address</h3>
+            {address.map((line) => (
+              <p key={line} className="mt-1 first:mt-2">
+                {line}
+              </p>
+            ))}
+          </div>
+
+          <div>
+            <h3>Follow</h3>
+            <ul className="mt-2 space-y-1">
+              {socials.map((s) => (
+                <li key={s.label}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="transition-opacity hover:opacity-60"
+                  >
+                    <ScrambleText text={s.label} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </footer>
