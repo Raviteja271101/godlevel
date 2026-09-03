@@ -136,20 +136,6 @@ export default function WorldClock() {
             </p>
           </div>
         </div>
-
-        {/* One bar per show, doubling as the selector. */}
-        <div className="relative mt-10 flex gap-1 lg:mt-8">
-          {shown.map((e, i) => (
-            <button
-              key={e.code}
-              type="button"
-              onClick={() => select(i)}
-              aria-label={`Show ${e.city}`}
-              aria-current={i === safeIndex}
-              className={`h-px flex-1 transition-colors duration-500 ${i === safeIndex ? "bg-ink" : "bg-hair"}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );
