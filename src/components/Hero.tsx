@@ -35,7 +35,7 @@ export default function Hero() {
       {/* Bottom-left descriptor. */}
       <div className="absolute bottom-6 left-6 max-w-[34ch] md:bottom-8 md:left-8">
         <p className="eyebrow opacity-70">{site.tagline}</p>
-        <p className="measure mt-3 text-white">{site.description}</p>
+        <p className="measure mt-3 text-white">{site.intro}</p>
       </div>
 
       {/* Bottom-right "next up" card. */}

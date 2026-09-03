@@ -4,6 +4,8 @@ export const site = {
   tagline: "Come as you are.",
   description:
     "We create spaces where people can come together, discover something new, and experience things differently.",
+  /* Shown over the hero video; the description above is for search results. */
+  intro: "Godlevel is a platform for exploring culture, community, and new experiences.",
   founded: 2017,
   base: "Lisbon — Tbilisi — Reykjavík",
   email: "hello@godlevel.example",
