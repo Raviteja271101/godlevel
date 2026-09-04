@@ -124,7 +124,7 @@ export default function HomePage() {
           </p>
         </Reveal>
 
-        <div className="mt-8">
+        <div className="card-list mt-8">
           <CardRail label="Godlevel Collective" columns={4}>
             {releases.map((release) => (
               <Link key={release.catalogue} href="/label" className="group block" data-cursor-text="Listen">
