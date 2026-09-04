@@ -12,9 +12,11 @@ import EventCard from "./EventCard";
 const SLOT = 6; // distance between marks
 const BOX_H = 12; // tallest mark, and the height of the row
 
-const RESTING_W = 1;
+/* Every mark is the same hairline width. The current one is set apart by
+   height and strength alone, as on the reference — widening it made it read
+   as a different weight depending on which slot it fell in. */
+const MARK_W = 1;
 const RESTING_H = 8;
-const CURRENT_W = 2;
 const CURRENT_H = 12;
 import type { Event } from "@/data/events";
 
@@ -111,15 +113,14 @@ export default function EventsCarousel({
 
         <svg
           aria-hidden="true"
-          width={(events.length - 1) * SLOT + CURRENT_W}
+          width={(events.length - 1) * SLOT + MARK_W}
           height={BOX_H}
-          viewBox={`0 0 ${(events.length - 1) * SLOT + CURRENT_W} ${BOX_H}`}
+          viewBox={`0 0 ${(events.length - 1) * SLOT + MARK_W} ${BOX_H}`}
           shapeRendering="crispEdges"
           className="shrink-0 overflow-visible"
         >
           {events.map((e, i) => {
             const isActive = i === active;
-            const w = isActive ? CURRENT_W : RESTING_W;
             const h = isActive ? CURRENT_H : RESTING_H;
             return (
               <rect
@@ -127,7 +128,7 @@ export default function EventsCarousel({
                 data-active={isActive}
                 x={i * SLOT}
                 y={BOX_H - h}
-                width={w}
+                width={MARK_W}
                 height={h}
                 fill="currentColor"
                 opacity={isActive ? 1 : 0.4}
