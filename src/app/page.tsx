@@ -3,7 +3,7 @@ import Link from "next/link";
 import CropMarks from "@/components/CropMarks";
 import EventCard from "@/components/EventCard";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
+import PartnersReel from "@/components/PartnersReel";
 // import ProductCard from "@/components/ProductCard"; // restore with the shop section
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
@@ -84,7 +84,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Marquee items={["Six shows, six countries", "Season 09 on sale", "SL-004 out on vinyl", "Godlevel Radio"]} />
+      <PartnersReel />
 
       {/* ---------- Upcoming events ---------- */}
       <section className="gutter py-16 md:py-24">
