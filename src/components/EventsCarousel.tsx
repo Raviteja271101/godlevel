@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import EventCard from "./EventCard";
-
-/* The marks are drawn as one SVG on a whole-pixel grid.
-   As plain elements they sat at fractional offsets, so a 2px line smeared
-   across five device pixels rather than landing on four — and the amount it
-   smeared changed as the row reflowed around whichever mark was wider,
-   which made the current mark look fatter in some slots than others.
-   Integer coordinates plus crispEdges renders every mark identically. */
-const SLOT = 6; // distance between marks
-const BOX_H = 12; // tallest mark, and the height of the row
-
-/* Every mark is the same hairline width. The current one is set apart by
-   height and strength alone, as on the reference — widening it made it read
-   as a different weight depending on which slot it fell in. */
-const MARK_W = 1;
-const RESTING_H = 8;
-const CURRENT_H = 12;
 import type { Event } from "@/data/events";
+
+/* The marks are drawn as one SVG on a whole-pixel grid. As separate elements
+   they sat at fractional offsets, so a line smeared across device pixels and
+   the row reflowed as the current mark moved, which made the same mark look
+   heavier in some slots than others. Integer coordinates and crisp edges
+   render every mark identically.
+
+   Values are taken from the reference, measured at 390px: every mark one
+   pixel wide, five pixels apart, sitting on a common baseline. Resting
+   heights cycle through a repeating pattern; the current mark is the
+   tallest of them and the only one at full strength. */
+const SLOT = 6; // 1px mark + 5px gap
+const MARK_W = 1;
+const RESTING_H = [14, 18, 10, 16, 12];
+const CURRENT_H = 20;
+const BOX_H = CURRENT_H;
 
 /**
  * Upcoming events as a swipeable rail.
@@ -121,7 +121,7 @@ export default function EventsCarousel({
         >
           {events.map((e, i) => {
             const isActive = i === active;
-            const h = isActive ? CURRENT_H : RESTING_H;
+            const h = isActive ? CURRENT_H : RESTING_H[i % RESTING_H.length];
             return (
               <rect
                 key={e.code}
