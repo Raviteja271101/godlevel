@@ -22,8 +22,6 @@ export default function WorldClock() {
   const [index, setIndex] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [paused, setPaused] = useState(false);
-  /* Null until a point is clicked, so the globe opens unmarked. */
-  const [selected, setSelected] = useState<number | null>(null);
   /* Point under the cursor, driving the live coordinate readout. */
   const [hover, setHover] = useState<{ lat: number; lon: number } | null>(null);
 
@@ -68,7 +66,6 @@ export default function WorldClock() {
 
   const select = (i: number) => {
     setIndex(i);
-    setSelected(i);
     setPaused(true);
   };
 
@@ -93,7 +90,6 @@ export default function WorldClock() {
               active={safeIndex}
               onSelect={select}
               onInteract={() => setPaused(true)}
-              selected={selected != null && selected < shown.length ? selected : null}
               onHover={setHover}
             />
           </div>
@@ -101,11 +97,17 @@ export default function WorldClock() {
 
         {/* ---- Top copy: headline and filter, clock to the right ---- */}
         <div className="order-1 lg:pointer-events-none lg:absolute lg:inset-x-0 lg:top-0 lg:order-none lg:flex lg:justify-between lg:gap-8 lg:px-[7.8vw]">
-          <div className="lg:pointer-events-auto lg:max-w-[40ch]">
+          <div className="lg:max-w-[34rem]">
+            {/* Broken by hand so the three lines fall where they should, not
+                wherever the column happens to end. */}
             <h2 className="display t-statement">
-              Discover the world of {site.name} around the globe
+              {[`Discover the`, `World of ${site.name}`, `Around the globe`].map((line) => (
+                <span key={line} className="block whitespace-nowrap">
+                  {line}
+                </span>
+              ))}
             </h2>
-            <div className="mt-5 flex gap-2 lg:mt-6">
+            <div className="mt-5 flex gap-2 lg:pointer-events-auto lg:mt-6">
               {filterLink("all", "All")}
               <span className="opacity-40">/</span>
               {filterLink("upcoming", "Upcoming")}
@@ -113,7 +115,7 @@ export default function WorldClock() {
           </div>
 
           {/* Readouts are desktop-only; a phone drops them. */}
-          <div className="hidden lg:pointer-events-auto lg:block lg:text-right">
+          <div className="hidden lg:block lg:text-right">
             <p>
               <span className="opacity-50">Local time:</span>{" "}
               <span className="tabular-nums">{localTime}</span>
@@ -126,19 +128,16 @@ export default function WorldClock() {
 
         {/* ---- Bottom copy: coordinates left, standfirst right ---- */}
         <div className="order-3 mt-10 lg:pointer-events-none lg:absolute lg:inset-x-0 lg:bottom-0 lg:order-none lg:mt-0 lg:flex lg:items-end lg:justify-between lg:gap-8 lg:px-[7.8vw]">
-          <div className="hidden lg:pointer-events-auto lg:block">
+          <div className="hidden lg:block">
             <p>
               <span className="opacity-50">Lat:</span> {formatLat((hover ?? place.coords).lat)}
             </p>
             <p className="mt-1">
               <span className="opacity-50">Lon:</span> {formatLon((hover ?? place.coords).lon)}
             </p>
-            <p className="mt-3">
-              {place.code} &mdash; {place.city}, {place.country}
-            </p>
           </div>
 
-          <p className="measure lg:pointer-events-auto lg:text-right">
+          <p className="measure lg:text-right">
             Moving from city to city, every destination brings a different energy, a
             different perspective, and a new story to the experience.
           </p>

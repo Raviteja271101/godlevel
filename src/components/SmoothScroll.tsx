@@ -34,7 +34,22 @@ touchMultiplier: 1.6,
     };
     document.addEventListener("click", onClick);
 
+    /* The mobile menu sets data-menu-open on <html>. Pause here while it is
+       up: body overflow stops the user scrolling, but not Lenis, which drives
+       the page with scripted scrolls of its own. */
+    const syncMenu = () => {
+      if (document.documentElement.hasAttribute("data-menu-open")) lenis.stop();
+      else lenis.start();
+    };
+    syncMenu();
+    const menuWatch = new MutationObserver(syncMenu);
+    menuWatch.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-menu-open"],
+    });
+
     return () => {
+      menuWatch.disconnect();
       cancelAnimationFrame(frame);
       document.removeEventListener("click", onClick);
       lenis.destroy();

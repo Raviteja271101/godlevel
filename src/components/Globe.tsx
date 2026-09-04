@@ -30,16 +30,12 @@ const SPIN = 0.06;
 export default function Globe({
   events,
   active,
-  selected,
   onSelect,
   onInteract,
   onHover,
 }: {
   events: Event[];
   active: number;
-  /* Index the user actually clicked. Null until then, so the globe opens
-     with no target planted on it. */
-  selected: number | null;
   onSelect: (index: number) => void;
   /** Fired when the user grabs the globe, so the caller can stop advancing. */
   onInteract?: () => void;
@@ -55,6 +51,9 @@ export default function Globe({
   const rotRef = useRef<[number, number]>([-events[0].coords.lon, -events[0].coords.lat]);
   const targetRef = useRef<[number, number]>([-events[0].coords.lon, -events[0].coords.lat]);
   const hitsRef = useRef<{ x: number; y: number; i: number }[]>([]);
+  /* Marker under the cursor. A ref, not state: the draw loop reads it every
+     frame and must not re-render to do so. */
+  const hoveredRef = useRef<number | null>(null);
 
   // Drag state: while the user holds the globe they own the rotation, and on
   // release it keeps spinning briefly before settling.
@@ -199,7 +198,7 @@ export default function Globe({
 
         // Only a clicked point is marked out — the auto-advancing selection
         // turns the globe but plants no target.
-        const isPicked = i === selected;
+        const isPicked = i === hoveredRef.current;
         const s = isPicked ? 9 : 6;
 
         ctx.fillStyle = isPicked ? ACTIVE : MARKER;
@@ -219,7 +218,7 @@ export default function Globe({
 
       // Below lg the corner readouts are hidden, so the globe labels itself:
       // a black plate beside the active marker, as on the reference.
-      const act = hits.find((h) => h.i === selected);
+      const act = hits.find((h) => h.i === hoveredRef.current);
       if (act) {
         const ev = events[act.i];
         const lines = [
@@ -258,7 +257,7 @@ export default function Globe({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [events, active, selected, land]);
+  }, [events, active, land]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     draggingRef.current = true;
@@ -268,20 +267,43 @@ export default function Globe({
     e.currentTarget.setPointerCapture(e.pointerId);
     onInteract?.();
   };
+  /* Nearest marker to a canvas point, or -1. Shared by hover and click so the
+     two cannot drift apart. */
+  const pickAt = (px: number, py: number) => {
+    let best = -1;
+    let bestDist = 28;
+    hitsRef.current.forEach((h) => {
+      const d = Math.hypot(h.x - px, h.y - py);
+      if (d < bestDist) {
+        bestDist = d;
+        best = h.i;
+      }
+    });
+    return best;
+  };
+
 
   const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     // Report the point under the cursor so the caller can show live
     // coordinates. Null whenever the pointer is off the sphere.
-    if (onHover && !draggingRef.current) {
+    // Report the point under the cursor, and note any marker beneath it so the
+    // globe can label it on hover as well as on click.
+    if (!draggingRef.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const px = e.clientX - rect.left;
       const py = e.clientY - rect.top;
       const r = rect.width / 2;
-      if (Math.hypot(px - r, py - r) > r - 2) {
-        onHover(null);
-      } else {
-        const inv = projRef.current?.invert?.([px, py]);
-        onHover(inv ? { lon: inv[0], lat: inv[1] } : null);
+
+      const pick = pickAt(px, py);
+      hoveredRef.current = pick === -1 ? null : pick;
+
+      if (onHover) {
+        if (Math.hypot(px - r, py - r) > r - 2) {
+          onHover(null);
+        } else {
+          const inv = projRef.current?.invert?.([px, py]);
+          onHover(inv ? { lon: inv[0], lat: inv[1] } : null);
+        }
       }
     }
 
@@ -317,19 +339,12 @@ export default function Globe({
     if (movedRef.current > 6) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-
-    let best = -1;
-    let bestDist = 28;
-    hitsRef.current.forEach((h) => {
-      const d = Math.hypot(h.x - px, h.y - py);
-      if (d < bestDist) {
-        bestDist = d;
-        best = h.i;
-      }
-    });
-    if (best !== -1) onSelect(best);
+    const pick = pickAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (pick === -1) return;
+    // A tap fires no pointermove, so mark it here too — otherwise a phone,
+    // which cannot hover, would never light a point up.
+    hoveredRef.current = pick;
+    onSelect(pick);
   };
 
   return (
@@ -337,7 +352,10 @@ export default function Globe({
       ref={canvasRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      onPointerLeave={() => onHover?.(null)}
+      onPointerLeave={() => {
+        hoveredRef.current = null;
+        onHover?.(null);
+      }}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       onClick={handleClick}
