@@ -253,7 +253,6 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
    specificity and resolved unpredictably, leaving the highlight taking
    whatever height its slot happened to have. */
 .tick {
-  width: 1px;
   flex-shrink: 0;
   background: currentColor;
 }

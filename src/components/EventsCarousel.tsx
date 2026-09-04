@@ -7,6 +7,9 @@ import EventCard from "./EventCard";
 const RESTING = ["0.875em", "1.125em", "0.625em", "1em", "0.75em"];
 /* One height for the current mark, whichever slot it lands in. */
 const CURRENT = "1.125em";
+/* The current mark is drawn heavier; a hairline alone barely reads. */
+const CURRENT_WIDTH = "2px";
+const RESTING_WIDTH = "1px";
 import type { Event } from "@/data/events";
 
 /**
@@ -109,6 +112,7 @@ export default function EventsCarousel({
                 className="tick"
                 data-active={isActive}
                 style={{
+                  width: isActive ? CURRENT_WIDTH : RESTING_WIDTH,
                   height: isActive ? CURRENT : RESTING[i % RESTING.length],
                   opacity: isActive ? 1 : 0.4,
                 }}
