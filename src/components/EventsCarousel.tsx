@@ -25,12 +25,31 @@ export default function EventsCarousel({
   const railRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const [active, setActive] = useState(0);
 
   const sync = useCallback(() => {
     const rail = railRef.current;
     if (!rail) return;
     setAtStart(rail.scrollLeft < 8);
     setAtEnd(rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 8);
+
+    // Whichever card sits nearest the middle of the rail is the current one.
+    // Compared in viewport coordinates: offsetLeft is measured from the
+    // offset parent, which is not the scroller, so mixing it with scrollLeft
+    // put the reading out by a card at the end of the rail.
+    const railBox = rail.getBoundingClientRect();
+    const middle = railBox.left + railBox.width / 2;
+    let nearest = 0;
+    let best = Infinity;
+    Array.from(rail.children).forEach((child, i) => {
+      const box = child.getBoundingClientRect();
+      const d = Math.abs(box.left + box.width / 2 - middle);
+      if (d < best) {
+        best = d;
+        nearest = i;
+      }
+    });
+    setActive(nearest);
   }, []);
 
   useEffect(() => {
@@ -76,9 +95,9 @@ export default function EventsCarousel({
           &lt; Prev
         </button>
 
-        <span className="flex items-end gap-[3px]" aria-hidden="true">
-          {events.map((e) => (
-            <span key={e.code} className="h-2 w-px bg-ink opacity-30" />
+        <span className="flex items-end gap-[5px]" aria-hidden="true">
+          {events.map((e, i) => (
+            <span key={e.code} className="tick" data-active={i === active} />
           ))}
         </span>
 

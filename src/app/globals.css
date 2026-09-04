@@ -247,6 +247,24 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
 /* Words that slide between packed and justified positions on scroll.
    Inline-block so the transform applies; the spaces between them stay as
    text nodes, which is what justification actually stretches. */
+/* Carousel position marks. Hairline ticks whose base heights cycle in a
+   repeating five-step pattern, giving a deliberately irregular row; the one
+   for the centred card stands taller and comes to full strength. The active
+   rule is last so it outranks the nth-child heights at equal specificity. */
+.tick {
+  width: 1px;
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: 0.4;
+  transition: height 0.3s, opacity 0.3s;
+}
+.tick:nth-child(5n + 1) { height: 0.875em; }
+.tick:nth-child(5n + 2) { height: 1.125em; }
+.tick:nth-child(5n + 3) { height: 0.625em; }
+.tick:nth-child(5n + 4) { height: 1em; }
+.tick:nth-child(5n + 5) { height: 0.75em; }
+.tick[data-active="true"] { height: 1.25em; opacity: 1; }
+
 .spread-word {
   display: inline-block;
   will-change: transform;
