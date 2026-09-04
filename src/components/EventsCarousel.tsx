@@ -1,24 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import CarouselMarks from "./CarouselMarks";
 import EventCard from "./EventCard";
 import type { Event } from "@/data/events";
 
-/* The marks are drawn as one SVG on a whole-pixel grid. As separate elements
-   they sat at fractional offsets, so a line smeared across device pixels and
-   the row reflowed as the current mark moved, which made the same mark look
-   heavier in some slots than others. Integer coordinates and crisp edges
-   render every mark identically.
-
-   Values are taken from the reference, measured at 390px: every mark one
-   pixel wide, five pixels apart, sitting on a common baseline. Resting
-   heights cycle through a repeating pattern; the current mark is the
-   tallest of them and the only one at full strength. */
-const SLOT = 6; // 1px mark + 5px gap
-const MARK_W = 1;
-const RESTING_H = [14, 18, 10, 16, 12];
-const CURRENT_H = 20;
-const BOX_H = CURRENT_H;
 
 /**
  * Upcoming events as a swipeable rail.
@@ -111,31 +97,7 @@ export default function EventsCarousel({
           &lt; Prev
         </button>
 
-        <svg
-          aria-hidden="true"
-          width={(events.length - 1) * SLOT + MARK_W}
-          height={BOX_H}
-          viewBox={`0 0 ${(events.length - 1) * SLOT + MARK_W} ${BOX_H}`}
-          shapeRendering="crispEdges"
-          className="shrink-0 overflow-visible"
-        >
-          {events.map((e, i) => {
-            const isActive = i === active;
-            const h = isActive ? CURRENT_H : RESTING_H[i % RESTING_H.length];
-            return (
-              <rect
-                key={e.code}
-                data-active={isActive}
-                x={i * SLOT}
-                y={BOX_H - h}
-                width={MARK_W}
-                height={h}
-                fill="currentColor"
-                opacity={isActive ? 1 : 0.4}
-              />
-            );
-          })}
-        </svg>
+        <CarouselMarks count={events.length} active={active} />
 
         <button type="button" onClick={() => step(1)} disabled={atEnd} className={btn}>
           Next &gt;

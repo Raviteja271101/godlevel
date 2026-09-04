@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import CarouselMarks from "./CarouselMarks";
 import CropMarks from "./CropMarks";
 import type { Artist } from "@/data/artists";
 
@@ -120,15 +121,8 @@ export default function LineupRail({ artists }: { artists: Artist[] }) {
           &lt; Prev
         </button>
 
-        {/* Position indicator — one bar per artist. */}
-        <span className="flex items-end gap-[3px]" aria-hidden="true">
-          {artists.map((a, i) => (
-            <span
-              key={a.name}
-              className={`w-px bg-ink transition-all duration-300 ${i === active ? "h-4 opacity-100" : "h-2 opacity-30"}`}
-            />
-          ))}
-        </span>
+        {/* Position indicator — one mark per artist. */}
+        <CarouselMarks count={artists.length} active={active} />
 
         <button
           type="button"
