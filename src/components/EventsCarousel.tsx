@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import EventCard from "./EventCard";
+
+/* Resting heights, cycling so the row reads as an uneven row of ticks. */
+const RESTING = ["0.875em", "1.125em", "0.625em", "1em", "0.75em"];
+/* One height for the current mark, whichever slot it lands in. */
+const CURRENT = "1.125em";
 import type { Event } from "@/data/events";
 
 /**
@@ -96,9 +101,20 @@ export default function EventsCarousel({
         </button>
 
         <span className="flex items-end gap-[5px]" aria-hidden="true">
-          {events.map((e, i) => (
-            <span key={e.code} className="tick" data-active={i === active} />
-          ))}
+          {events.map((e, i) => {
+            const isActive = i === active;
+            return (
+              <span
+                key={e.code}
+                className="tick"
+                data-active={isActive}
+                style={{
+                  height: isActive ? CURRENT : RESTING[i % RESTING.length],
+                  opacity: isActive ? 1 : 0.4,
+                }}
+              />
+            );
+          })}
         </span>
 
         <button type="button" onClick={() => step(1)} disabled={atEnd} className={btn}>
