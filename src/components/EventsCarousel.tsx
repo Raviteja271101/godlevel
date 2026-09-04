@@ -3,13 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import EventCard from "./EventCard";
 
-/* Resting heights, cycling so the row reads as an uneven row of ticks. */
-const RESTING = ["0.875em", "1.125em", "0.625em", "1em", "0.75em"];
-/* One height for the current mark, whichever slot it lands in. */
-const CURRENT = "1.125em";
-/* The current mark is drawn heavier; a hairline alone barely reads. */
-const CURRENT_WIDTH = "2px";
+/* Every mark is identical at rest, so the only thing that ever stands out is
+   the current one. The resting heights used to cycle, which left the middle
+   mark as tall as an active mark and made the highlight look different
+   depending on which slot it fell in. */
+const RESTING_HEIGHT = "0.75em";
 const RESTING_WIDTH = "1px";
+
+const CURRENT_HEIGHT = "1.125em";
+const CURRENT_WIDTH = "2px";
 import type { Event } from "@/data/events";
 
 /**
@@ -113,7 +115,7 @@ export default function EventsCarousel({
                 data-active={isActive}
                 style={{
                   width: isActive ? CURRENT_WIDTH : RESTING_WIDTH,
-                  height: isActive ? CURRENT : RESTING[i % RESTING.length],
+                  height: isActive ? CURRENT_HEIGHT : RESTING_HEIGHT,
                   opacity: isActive ? 1 : 0.4,
                 }}
               />
