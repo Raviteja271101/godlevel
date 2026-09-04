@@ -252,11 +252,6 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
    They were driven by nth-child plus an attribute rule, which sat at equal
    specificity and resolved unpredictably, leaving the highlight taking
    whatever height its slot happened to have. */
-.tick {
-  flex-shrink: 0;
-  background: currentColor;
-}
-
 .spread-word {
   display: inline-block;
   will-change: transform;

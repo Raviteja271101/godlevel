@@ -3,15 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import EventCard from "./EventCard";
 
-/* Every mark is identical at rest, so the only thing that ever stands out is
-   the current one. The resting heights used to cycle, which left the middle
-   mark as tall as an active mark and made the highlight look different
-   depending on which slot it fell in. */
-const RESTING_HEIGHT = "0.75em";
-const RESTING_WIDTH = "1px";
+/* The marks are drawn as one SVG on a whole-pixel grid.
+   As plain elements they sat at fractional offsets, so a 2px line smeared
+   across five device pixels rather than landing on four — and the amount it
+   smeared changed as the row reflowed around whichever mark was wider,
+   which made the current mark look fatter in some slots than others.
+   Integer coordinates plus crispEdges renders every mark identically. */
+const SLOT = 6; // distance between marks
+const BOX_H = 12; // tallest mark, and the height of the row
 
-const CURRENT_HEIGHT = "1.125em";
-const CURRENT_WIDTH = "2px";
+const RESTING_W = 1;
+const RESTING_H = 8;
+const CURRENT_W = 2;
+const CURRENT_H = 12;
 import type { Event } from "@/data/events";
 
 /**
@@ -105,23 +109,32 @@ export default function EventsCarousel({
           &lt; Prev
         </button>
 
-        <span className="flex items-end gap-[5px]" aria-hidden="true">
+        <svg
+          aria-hidden="true"
+          width={(events.length - 1) * SLOT + CURRENT_W}
+          height={BOX_H}
+          viewBox={`0 0 ${(events.length - 1) * SLOT + CURRENT_W} ${BOX_H}`}
+          shapeRendering="crispEdges"
+          className="shrink-0 overflow-visible"
+        >
           {events.map((e, i) => {
             const isActive = i === active;
+            const w = isActive ? CURRENT_W : RESTING_W;
+            const h = isActive ? CURRENT_H : RESTING_H;
             return (
-              <span
+              <rect
                 key={e.code}
-                className="tick"
                 data-active={isActive}
-                style={{
-                  width: isActive ? CURRENT_WIDTH : RESTING_WIDTH,
-                  height: isActive ? CURRENT_HEIGHT : RESTING_HEIGHT,
-                  opacity: isActive ? 1 : 0.4,
-                }}
+                x={i * SLOT}
+                y={BOX_H - h}
+                width={w}
+                height={h}
+                fill="currentColor"
+                opacity={isActive ? 1 : 0.4}
               />
             );
           })}
-        </span>
+        </svg>
 
         <button type="button" onClick={() => step(1)} disabled={atEnd} className={btn}>
           Next &gt;
