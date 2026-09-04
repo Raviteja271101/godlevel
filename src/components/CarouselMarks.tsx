@@ -1,11 +1,17 @@
 /**
  * The row of position marks under a carousel.
  *
- * Drawn as one SVG on a whole-pixel grid. As separate elements the marks sat
- * at fractional offsets, so a line smeared across device pixels, and any
- * transition on them restarted on every re-render while scrolling, leaving
- * the paint behind the state. Both made the current mark look a different
- * weight depending on which slot it fell in.
+ * Drawn as one SVG so the marks keep fixed positions relative to each other
+ * and the row never reflows as the current one moves. As separate elements
+ * they sat at fractional offsets and any transition on them restarted on
+ * every re-render while scrolling, which left the paint behind the state and
+ * made the current mark look a different weight depending on its slot.
+ *
+ * Deliberately no crispEdges: it snaps each rect to the pixel grid on its
+ * own, so at browser zoom levels that do not land on whole pixels the marks
+ * snap to different widths and one comes out heavier than the rest. Ordinary
+ * antialiasing treats them all alike at any zoom, which is what the layout
+ * this follows does.
  *
  * Sizes are the reference's, measured at 390px: every mark one pixel wide,
  * five apart, on a shared baseline. Resting heights step through a repeating
@@ -33,7 +39,6 @@ export default function CarouselMarks({
       width={width}
       height={CURRENT_H}
       viewBox={`0 0 ${width} ${CURRENT_H}`}
-      shapeRendering="crispEdges"
       className={`shrink-0 overflow-visible ${className}`}
     >
       {Array.from({ length: count }, (_, i) => {
