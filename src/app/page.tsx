@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import CropMarks from "@/components/CropMarks";
-import EventCard from "@/components/EventCard";
 import Hero from "@/components/Hero";
+import EventsCarousel from "@/components/EventsCarousel";
 import PartnersReel from "@/components/PartnersReel";
 // import ProductCard from "@/components/ProductCard"; // restore with the shop section
 import Reveal from "@/components/Reveal";
@@ -99,13 +99,11 @@ export default function HomePage() {
           </div>
         </Reveal>
 
-        <div className="card-list mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {events.slice(0, 3).map((event, i) => (
-            <Reveal key={event.code} delay={i * 90}>
-              <EventCard event={event} index={i} sizes={GRID_SIZES} />
-            </Reveal>
-          ))}
-        </div>
+        <Reveal>
+          <div className="card-list mt-8">
+            <EventsCarousel events={events.slice(0, 3)} sizes={GRID_SIZES} />
+          </div>
+        </Reveal>
       </section>
 
       <WorldClock />
