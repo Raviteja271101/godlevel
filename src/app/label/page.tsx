@@ -31,7 +31,7 @@ export default function LabelPage() {
                     alt={`${release.title} by ${release.artist}`}
                     fill
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw"
-                    className="media-zoom object-cover grayscale group-hover:scale-[1.03] group-hover:grayscale-0"
+                    className="media-zoom object-cover group-hover:scale-[1.03]"
                   />
                 </div>
                 <div className="mt-3 flex gap-3">
@@ -68,7 +68,7 @@ export default function LabelPage() {
                     alt={artist.name}
                     fill
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw"
-                    className="media-zoom object-cover grayscale group-hover:scale-[1.03] group-hover:grayscale-0"
+                    className="media-zoom object-cover group-hover:scale-[1.03]"
                   />
                 </div>
                 <div className="mt-3 flex gap-3">

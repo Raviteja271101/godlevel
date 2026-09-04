@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import CropMarks from "@/components/CropMarks";
 import Hero from "@/components/Hero";
-import EventsCarousel from "@/components/EventsCarousel";
+import CardRail from "@/components/CardRail";
+import EventCard from "@/components/EventCard";
 import PartnersReel from "@/components/PartnersReel";
 // import ProductCard from "@/components/ProductCard"; // restore with the shop section
 import Reveal from "@/components/Reveal";
@@ -101,7 +102,11 @@ export default function HomePage() {
 
         <Reveal>
           <div className="card-list mt-8">
-            <EventsCarousel events={events.slice(0, 3)} sizes={GRID_SIZES} />
+            <CardRail label="Upcoming events" columns={3}>
+              {events.slice(0, 3).map((event, i) => (
+                <EventCard key={event.code} event={event} index={i} sizes={GRID_SIZES} />
+              ))}
+            </CardRail>
           </div>
         </Reveal>
       </section>
@@ -119,10 +124,10 @@ export default function HomePage() {
           </p>
         </Reveal>
 
-        <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-          {releases.map((release, i) => (
-            <Reveal key={release.catalogue} delay={i * 80}>
-              <Link href="/label" className="group block" data-cursor-text="Listen">
+        <div className="mt-8">
+          <CardRail label="Godlevel Collective" columns={4}>
+            {releases.map((release) => (
+              <Link key={release.catalogue} href="/label" className="group block" data-cursor-text="Listen">
                 <div className="relative aspect-square overflow-hidden bg-[#efefef]">
                   <CropMarks />
                   <Image
@@ -130,7 +135,7 @@ export default function HomePage() {
                     alt={`${release.title} by ${release.artist}`}
                     fill
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 23vw"
-                    className="media-zoom object-cover grayscale group-hover:scale-[1.03] group-hover:grayscale-0"
+                    className="media-zoom object-cover group-hover:scale-[1.03]"
                   />
                 </div>
                 <div className="mt-3 flex gap-3">
@@ -141,8 +146,8 @@ export default function HomePage() {
                   </span>
                 </div>
               </Link>
-            </Reveal>
-          ))}
+            ))}
+          </CardRail>
         </div>
 
         {/* Sits under the cards, right-aligned. */}

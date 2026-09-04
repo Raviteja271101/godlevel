@@ -2,27 +2,30 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import CarouselMarks from "./CarouselMarks";
-import EventCard from "./EventCard";
-import type { Event } from "@/data/events";
 
+const GAP_PX = 20;
 
 /**
- * Upcoming events as a swipeable rail.
+ * A row of cards that becomes swipeable on a phone.
  *
- * On a phone a card takes about 82% of the width so the next one shows at
- * the edge, which is what invites the swipe. From tablet up three sit
- * across the row and the rail stops scrolling, so it reads as a grid.
+ * A card takes about 82% of the width so the next one shows at the edge,
+ * which is what invites the swipe — the same proportion the reference uses,
+ * 288px of a 350px rail. From tablet up the cards share the row and the rail
+ * stops scrolling, so it reads as a grid.
  *
  * Built on native scroll-snap rather than a slider library: the browser
- * handles the touch physics, and it degrades to a plain scroller if the
- * script never runs.
+ * handles the touch physics, and with no script it degrades to a plain
+ * scroller.
  */
-export default function EventsCarousel({
-  events,
-  sizes,
+export default function CardRail({
+  label,
+  columns,
+  children,
 }: {
-  events: Event[];
-  sizes: string;
+  label: string;
+  /** How many cards share the row from tablet up. */
+  columns: number;
+  children: React.ReactNode[];
 }) {
   const railRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
@@ -37,8 +40,8 @@ export default function EventsCarousel({
 
     // Whichever card sits nearest the middle of the rail is the current one.
     // Compared in viewport coordinates: offsetLeft is measured from the
-    // offset parent, which is not the scroller, so mixing it with scrollLeft
-    // put the reading out by a card at the end of the rail.
+    // offset parent, not the scroller, so mixing it with scrollLeft puts the
+    // reading out by a card at the end of the rail.
     const railBox = rail.getBoundingClientRect();
     const middle = railBox.left + railBox.width / 2;
     let nearest = 0;
@@ -64,13 +67,12 @@ export default function EventsCarousel({
     const rail = railRef.current;
     if (!rail) return;
     const first = rail.firstElementChild as HTMLElement | null;
-    // One card plus the gap between them.
-    const distance = first ? first.clientWidth + 20 : rail.clientWidth * 0.8;
+    const distance = first ? first.clientWidth + GAP_PX : rail.clientWidth * 0.8;
     rail.scrollBy({ left: dir * distance, behavior: "smooth" });
   };
 
-  const btn =
-    "transition-opacity hover:opacity-60 disabled:pointer-events-none disabled:opacity-25";
+  const btn = "transition-opacity hover:opacity-60 disabled:pointer-events-none disabled:opacity-25";
+  const cardWidth = `calc((100% - ${(columns - 1) * GAP_PX}px) / ${columns})`;
 
   return (
     <div>
@@ -78,27 +80,26 @@ export default function EventsCarousel({
         ref={railRef}
         onScroll={sync}
         role="region"
-        aria-label="Upcoming events"
+        aria-label={label}
         className="no-bar -mx-[2px] flex snap-x snap-mandatory gap-5 overflow-x-auto px-[2px] md:overflow-visible"
       >
-        {events.map((event, i) => (
+        {children.map((child, i) => (
           <div
-            key={event.code}
-            className="w-[82%] shrink-0 snap-start md:w-[calc((100%-2.5rem)/3)]"
+            key={i}
+            className="w-[82%] shrink-0 snap-start md:w-[var(--card-w)]"
+            style={{ "--card-w": cardWidth } as React.CSSProperties}
           >
-            <EventCard event={event} index={i} sizes={sizes} />
+            {child}
           </div>
         ))}
       </div>
 
-      {/* Controls: only useful while the rail actually scrolls. */}
+      {/* Only useful while the rail actually scrolls. */}
       <div className="mt-8 flex items-center justify-center gap-6 md:hidden">
         <button type="button" onClick={() => step(-1)} disabled={atStart} className={btn}>
           &lt; Prev
         </button>
-
-        <CarouselMarks count={events.length} active={active} />
-
+        <CarouselMarks count={children.length} active={active} />
         <button type="button" onClick={() => step(1)} disabled={atEnd} className={btn}>
           Next &gt;
         </button>
