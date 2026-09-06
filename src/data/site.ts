@@ -17,6 +17,7 @@ export const nav = [
   { label: "Godlevel Collective", href: "/label" },
   { label: "Gallery", href: "/gallery" },
   { label: "Shop", href: "/shop" },
+  { label: "Community", href: "/community" },
   { label: "About", href: "/about" },
 ] as const;
 
@@ -32,7 +33,7 @@ export const navGroups: { label: string; href: string; count?: number }[][] = [
   ],
   [
     { label: "About", href: "/about" },
-    { label: "Tickets", href: "/events" },
+    { label: "Community", href: "/community" },
   ],
 ];
 
@@ -49,6 +50,7 @@ export const footerColumns = [
       { label: "About", href: "/about" },
       { label: "Experiences", href: "/events" },
       { label: "Collective", href: "/label" },
+      { label: "Community", href: "/community" },
       { label: "Partners", href: "/about#press" },
       { label: "Contact", href: "/about#contact" },
     ],

@@ -143,22 +143,14 @@
   }
 
   /* Justified mono paragraph block. */
-  /* Paragraphs run a step above the UI text: 12px on phones, 15px from
-     tablet width up, matching the reference. */
+  /* 12px throughout. The reference runs its body copy at the same size as its
+     UI text, not a step above it -- measured on its about page at 1440. */
   .measure {
     max-width: 44ch;
     font-size: 12px;
     line-height: 14.4px;
     text-align: justify;
     text-transform: uppercase;
-  }
-
-  @media (min-width: 768px) {
-    .measure {
-      /* Paragraphs sit a step above the UI text, as on the reference. */
-      font-size: 15px;
-      line-height: 18px;
-    }
   }
 }
 
