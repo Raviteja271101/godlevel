@@ -5,7 +5,6 @@ import CardCarousel from "@/components/CardCarousel";
 import AboutSlider from "@/components/AboutSlider";
 import ImageMarquee from "@/components/ImageMarquee";
 import Hero from "@/components/Hero";
-import Reveal from "@/components/Reveal";
 import { gallery } from "@/data/gallery";
 import { site } from "@/data/site";
 
@@ -13,36 +12,6 @@ export const metadata: Metadata = {
   title: "About",
   description: site.description,
 };
-
-const stats = [
-  { value: "48", label: "Shows staged" },
-  { value: "19", label: "Countries" },
-  { value: "04", label: "Records pressed" },
-  { value: "340", label: "Average capacity" },
-];
-
-const sections = [
-  {
-    id: "radio",
-    title: "Godlevel Radio",
-    body: "A monthly two-hour broadcast recorded wherever we happen to be. Mostly other peoples records, occasionally a rough mix of something that is not finished yet. Archived in full, free to stream.",
-  },
-  {
-    id: "access",
-    title: "Accessibility",
-    body: "Several of our venues are historic or semi-derelict, so access varies by site. Every event listing carries a plain-language access note written after a physical survey, and a named contact who will answer questions before you buy.",
-  },
-  {
-    id: "safer",
-    title: "Safer spaces",
-    body: "Trained welfare staff work every show and are identifiable at all times. Harassment of any kind ends your night. We would rather refund a ticket than host someone who makes the room worse.",
-  },
-  {
-    id: "press",
-    title: "Press",
-    body: `Logos, artist photography and stage plots are available on request. Write to ${site.press} and tell us what you are working on.`,
-  },
-];
 
 /* Placeholder: our own still and an existing line, pending the real group
    photograph and copy. */
