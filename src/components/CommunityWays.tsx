@@ -11,7 +11,6 @@ export type Way = { label: string; body: string };
  */
 export default function CommunityWays({ items }: { items: readonly Way[] }) {
   const [active, setActive] = useState(0);
-  const current = items[active];
 
   return (
     <>
@@ -28,21 +27,23 @@ export default function CommunityWays({ items }: { items: readonly Way[] }) {
         ))}
       </div>
 
-      {/* ---- lg and up: list left, copy right ---- */}
+      {/* ---- lg and up: headings listed down the left, the three copies held
+             together on the right — the active one full-size, the other two a
+             little smaller and dimmed. ---- */}
       <div className="hidden gap-12 lg:grid lg:grid-cols-12">
-        <ul className="lg:col-span-5">
+        <ul className="lg:col-span-5 lg:self-center">
           {items.map((item, i) => (
             <li key={item.label} className="hairline">
               <button
                 type="button"
                 onClick={() => setActive(i)}
                 aria-current={i === active}
-                className="flex w-full items-baseline gap-3 py-4 text-left transition-opacity hover:opacity-100"
+                className="flex w-full items-baseline gap-3 py-5 text-left transition-opacity hover:opacity-100"
               >
                 <span className="text-ink-30">[{String(i + 1).padStart(2, "0")}]</span>
                 <span
-                  className={`display text-3xl transition-opacity ${
-                    i === active ? "opacity-100" : "opacity-40"
+                  className={`display transition-all ${
+                    i === active ? "text-3xl opacity-100" : "text-xl opacity-40"
                   }`}
                 >
                   {item.label}
@@ -52,8 +53,17 @@ export default function CommunityWays({ items }: { items: readonly Way[] }) {
           ))}
         </ul>
 
-        <div className="lg:col-span-6 lg:col-start-7 lg:self-center">
-          <p className="measure max-w-none text-lg">{current.body}</p>
+        <div className="space-y-5 lg:col-span-6 lg:col-start-7 lg:self-center">
+          {items.map((item, i) => (
+            <p
+              key={item.label}
+              className={`measure max-w-none transition-all duration-300 ${
+                i === active ? "text-lg opacity-100" : "text-sm opacity-40"
+              }`}
+            >
+              {item.body}
+            </p>
+          ))}
         </div>
       </div>
     </>
