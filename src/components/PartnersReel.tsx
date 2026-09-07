@@ -44,7 +44,7 @@ export default function PartnersReel() {
   );
 
   return (
-    <section className="hairline border-b border-hair">
+    <section id="partners" className="hairline border-b border-hair">
       <div className="relative">
         {/* ---- Rails: desktop only ---- */}
         <div className="pointer-events-none sticky top-0 z-20 hidden h-[100svh] lg:block">

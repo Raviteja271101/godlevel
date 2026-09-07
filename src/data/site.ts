@@ -41,6 +41,11 @@ export const socials = [
   { label: "Instagram", href: "https://instagram.com" },
   { label: "YouTube", href: "https://youtube.com" },
 ] as const;
+export const contact = {
+  email: "hello@godlevel.in",
+  phone: "+91 XXXXX XXXXX",
+} as const;
+
 
 export const footerColumns = [
   {
@@ -51,8 +56,8 @@ export const footerColumns = [
       { label: "Experiences", href: "/events" },
       { label: "Collective", href: "/label" },
       { label: "Community", href: "/community" },
-      { label: "Partners", href: "/about#press" },
-      { label: "Contact", href: "/about#contact" },
+      { label: "Partners", href: "/#partners" },
+      { label: "Contact", href: `mailto:${contact.email}` },
     ],
   },
 ] as const;
@@ -70,11 +75,6 @@ export const footerBlurb = [
   "culture, community, and",
   "new experiences",
 ] as const;
-
-export const contact = {
-  email: "hello@godlevel.in",
-  phone: "+91 XXXXX XXXXX",
-} as const;
 
 /** One line per row, as printed in the footer. */
 export const address = ["Godlevel", "[Full Address]", "Mumbai, Maharashtra, India"] as const;

@@ -4,16 +4,25 @@ import { address, contact, footerBlurb, footerColumns, footerCta, site, socials 
 
 export default function SiteFooter() {
   const explore = footerColumns[0];
-
+  /* mailto: and other schemes are not routes, so they bypass Link, which
+     expects something the router can navigate to. */
   const exploreLinks = (
     <ul className="mt-3 space-y-2">
-      {explore.links.map((link) => (
-        <li key={link.label}>
-          <Link href={link.href} className="transition-opacity hover:opacity-60">
-            <ScrambleText text={link.label} />
-          </Link>
-        </li>
-      ))}
+      {explore.links.map((link) =>
+        link.href.startsWith("/") ? (
+          <li key={link.label}>
+            <Link href={link.href} className="transition-opacity hover:opacity-60">
+              <ScrambleText text={link.label} />
+            </Link>
+          </li>
+        ) : (
+          <li key={link.label}>
+            <a href={link.href} className="transition-opacity hover:opacity-60">
+              <ScrambleText text={link.label} />
+            </a>
+          </li>
+        ),
+      )}
     </ul>
   );
 
