@@ -62,7 +62,7 @@ export default function EventMeta({ children }: { children: React.ReactNode }) {
   return (
     <div
       ref={ref}
-      className="pointer-events-none fixed inset-x-0 z-40 grid grid-cols-1 gap-6 gutter text-white mix-blend-difference sm:grid-cols-12"
+      className="pointer-events-none fixed inset-x-0 z-40 hidden gap-6 gutter text-white mix-blend-difference sm:grid sm:grid-cols-12"
     >
       {children}
     </div>

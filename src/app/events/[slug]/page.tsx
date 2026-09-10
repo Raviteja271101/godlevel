@@ -80,6 +80,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           />
           <div className="absolute inset-0 bg-black/40" />
 
+          {/* Phone: the meta stacks in the hero and scrolls away with it, like
+              the reference. The fixed gliding bar below is sm+ only — stacked
+              three-high it would glide up and collide with the title. */}
+          <div className="absolute inset-x-6 top-[46%] z-10 grid grid-cols-1 gap-6 text-white sm:hidden">
+            <Meta event={event} tone="light" />
+          </div>
+
           {/* Title, anchored to the bottom of the first viewport. Inset one
               column (like the reference) so it aligns with the body copy and the
               meta rather than hugging the gutter. */}
