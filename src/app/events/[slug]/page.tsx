@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import CropMarks from "@/components/CropMarks";
 import { formatDate } from "@/components/EventCard";
 import EventCTA from "@/components/EventCTA";
+import EventMeta from "@/components/EventMeta";
 import LineupRail from "@/components/LineupRail";
 import Reveal from "@/components/Reveal";
 import SplitWords from "@/components/SplitWords";
@@ -30,21 +31,23 @@ export async function generateMetadata({
   };
 }
 
-/** DATE / TIME / LOCATION, shown in the hero and again in the sticky bar. */
+/** DATE / TIME / LOCATION for the hero meta bar. Laid out on the 12-column
+    grid so it sits inside the content column (inset one column, Location
+    right-aligned to the same edge as the copy) — matching the reference. */
 function Meta({ event, tone = "dark" }: { event: ReturnType<typeof getEvent>; tone?: "dark" | "light" }) {
   if (!event) return null;
   const muted = tone === "dark" ? "opacity-70" : "opacity-60";
   return (
     <>
-      <div>
+      <div className="sm:col-span-3 sm:col-start-2">
         <p className={`eyebrow ${muted}`}>Date</p>
         <p className="mt-1">{formatDate(event.date)}</p>
       </div>
-      <div>
+      <div className="sm:col-span-2 sm:col-start-7">
         <p className={`eyebrow ${muted}`}>Time</p>
         <p className="mt-1">{event.time}</p>
       </div>
-      <div>
+      <div className="sm:col-span-3 sm:col-start-9 sm:text-right">
         <p className={`eyebrow ${muted}`}>Location</p>
         <p className="mt-1">
           {event.city}, {event.country}
@@ -63,58 +66,66 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
-      {/* ---------- Hero ---------- */}
+      {/* Paper backdrop for the region the fixed meta bar overlays. The page
+          transition (.page-enter) isolates blend groups, so the bar's
+          mix-blend-difference needs a real white surface *inside* that group to
+          flip against over the copy (→ black); the hero's own black ground keeps
+          it white over the image. Paper matches the body, so there is no seam. */}
+      <div className="bg-paper">
+      {/* ---------- Hero image + title ---------- */}
       <section className="relative h-[100svh] min-h-[620px] w-full overflow-hidden bg-night text-white">
-        <Image
-          src={event.image}
-          alt={`${event.venue}, ${event.city}`}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/40" />
+          <Image
+            src={event.image}
+            alt={`${event.venue}, ${event.city}`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40" />
 
-        {/* Meta row, sitting on the vertical centre line. */}
-        <div className="absolute inset-x-6 top-1/2 grid -translate-y-1/2 grid-cols-1 gap-6 sm:grid-cols-3 md:inset-x-8">
-          <Meta event={event} />
-        </div>
+          {/* Title, anchored to the bottom of the first viewport. Inset one
+              column (like the reference) so it aligns with the body copy and the
+              meta rather than hugging the gutter. */}
+          <div className="absolute inset-x-0 bottom-28 z-10 gutter md:bottom-8">
+            <div className="lg:grid lg:grid-cols-12">
+              <div className="lg:col-span-10 lg:col-start-2">
+                <p className="eyebrow opacity-70">{event.code}</p>
+                <h1 className="display t-statement mt-3 max-w-[14ch]">
+                  <SplitWords text={`${site.wordmark} ${event.city}`} stagger={60} />
+                </h1>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Extra bottom clearance on small screens so the pinned ticket
-            buttons never sit on top of the title. */}
-        <div className="absolute inset-x-6 bottom-28 md:inset-x-8 md:bottom-8">
-          <p className="eyebrow opacity-70">{event.code}</p>
-          <h1 className="display t-statement mt-3 max-w-[14ch]">
-            <SplitWords text={`${site.wordmark} ${event.city}`} stagger={60} />
-          </h1>
-        </div>
-      </section>
-
-      {/* ---------- Sticky meta ---------- */}
-      {/* Pinned just under the fixed header so the two never collide. */}
-      <div className="sticky top-[68px] z-40 border-b border-hair bg-paper">
-        <div className="grid grid-cols-1 gap-4 gutter py-4 sm:grid-cols-3">
-          <Meta event={event} tone="light" />
-        </div>
-      </div>
+      {/* The single Date / Time / Location bar. Fixed (like the nav) so its
+          mix-blend escapes the page-transition group and blends against the
+          whole page: white over the dark hero, black over the pale copy. It
+          glides from the hero centre to just under the header, then fades. */}
+      <EventMeta>
+        <Meta event={event} tone="light" />
+      </EventMeta>
 
       {/* ---------- Description + artwork ---------- */}
-      <section className="gutter py-16 md:py-24">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-          <Reveal>
+      <section className="gutter pt-24 pb-16 md:pt-28 md:pb-24">
+        {/* 12-column grid so the copy is inset a column from the gutter — the
+            reference indents its body text rather than letting it hug the edge. */}
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
+          <Reveal className="lg:col-span-5 lg:col-start-2">
             <div className="space-y-6">
               {event.paragraphs.map((para) => (
-                <p key={para} className="measure">
+                <p key={para} className="measure max-w-none">
                   {para}
                 </p>
               ))}
-              <p className="measure opacity-60">
+              <p className="measure max-w-none opacity-60">
                 {event.venue}. {formatLat(event.coords.lat)} / {formatLon(event.coords.lon)}
               </p>
             </div>
           </Reveal>
 
-          <Reveal delay={120}>
+          <Reveal delay={120} className="lg:col-span-5 lg:col-start-8">
             <figure className="relative aspect-[4/3] overflow-hidden bg-[#efefef]">
               <CropMarks />
               <Image
@@ -131,6 +142,7 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
           </Reveal>
         </div>
       </section>
+      </div>
 
       {/* ---------- Line-up ---------- */}
       <section id="tickets" className="border-t border-hair gutter py-16 md:py-24">

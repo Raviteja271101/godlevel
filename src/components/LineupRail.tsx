@@ -21,7 +21,11 @@ export default function LineupRail({ artists }: { artists: Artist[] }) {
         const rail = railRef.current;
         const card = rail?.children[next] as HTMLElement | undefined;
         if (rail && card) {
-          rail.scrollTo({ left: card.offsetLeft - rail.offsetLeft, behavior: "smooth" });
+          // Centre the focused card in the rail (the reference keeps the active
+          // card centred with its neighbours peeking on either side).
+          const target =
+            card.offsetLeft - rail.offsetLeft - (rail.clientWidth - card.clientWidth) / 2;
+          rail.scrollTo({ left: target, behavior: "smooth" });
         }
         return next;
       });
@@ -54,7 +58,14 @@ export default function LineupRail({ artists }: { artists: Artist[] }) {
 
   return (
     <div>
-      <div ref={railRef} className="no-bar flex snap-x snap-mandatory gap-6 overflow-x-auto" role="list">
+      {/* Symmetric inline padding = half the leftover width, so every card —
+          including the first and last — snaps to the centre of the rail, the
+          reference's centred carousel. */}
+      <div
+        ref={railRef}
+        className="no-bar flex snap-x snap-mandatory gap-6 overflow-x-auto px-[calc(50%-37vw)] sm:px-[calc(50%-22vw)] lg:px-[calc(50%-11vw)]"
+        role="list"
+      >
         {artists.map((artist, i) => {
           const isActive = i === active;
           return (
@@ -62,7 +73,7 @@ export default function LineupRail({ artists }: { artists: Artist[] }) {
               key={artist.name}
               role="listitem"
               onMouseEnter={() => setActive(i)}
-              className="w-[74vw] shrink-0 snap-center sm:w-[44vw] lg:w-[27vw]"
+              className="w-[74vw] shrink-0 snap-center sm:w-[44vw] lg:w-[22vw]"
             >
               {/* Name chip, sitting above the frame. */}
               <span
