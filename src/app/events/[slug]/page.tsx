@@ -6,10 +6,8 @@ import CropMarks from "@/components/CropMarks";
 import { formatDate } from "@/components/EventCard";
 import EventCTA from "@/components/EventCTA";
 import EventMeta from "@/components/EventMeta";
-import LineupRail from "@/components/LineupRail";
 import Reveal from "@/components/Reveal";
 import SplitWords from "@/components/SplitWords";
-import { resolveLineup } from "@/data/artists";
 import { events, formatLat, formatLon, getEvent } from "@/data/events";
 import { site } from "@/data/site";
 
@@ -61,8 +59,6 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   const event = getEvent(slug);
   if (!event) notFound();
-
-  const lineup = resolveLineup(event.lineup);
 
   return (
     <>
@@ -144,20 +140,10 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       </section>
       </div>
 
-      {/* ---------- Line-up ---------- */}
-      <section id="tickets" className="border-t border-hair gutter py-16 md:py-24">
-        <Reveal>
-          <p className="eyebrow">Line-up</p>
-        </Reveal>
-        <Reveal delay={100}>
-          <div className="mt-8">
-            <LineupRail artists={lineup} />
-          </div>
-        </Reveal>
-      </section>
-
       {/* ---------- Other shows ---------- */}
-      <section className="border-t border-hair gutter py-16 md:py-20">
+      {/* Carries the #tickets anchor (the pinned Tickets button scrolls here);
+          each card links through to that show's info & tickets. */}
+      <section id="tickets" className="scroll-mt-24 border-t border-hair gutter py-16 md:py-20">
         <div className="flex items-baseline justify-between gap-6">
           <p className="eyebrow">More shows</p>
           <Link href="/events" className="arrow-link">
