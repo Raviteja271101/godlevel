@@ -120,7 +120,12 @@ export default function SiteHeader() {
           {/* Reference spaces this list by gap rather than per-item padding. */}
           <nav className="hairline mt-5 flex flex-col gap-5 pt-5">
             {navGroups.flat().map((item) => (
-              <Link key={item.label} href={item.href} className="eyebrow text-[1.2rem]">
+              <Link
+                key={item.label}
+                href={item.href}
+                aria-current={isActiveHref(pathname, item.href) ? "page" : undefined}
+                className="eyebrow text-[1.2rem]"
+              >
                 <ScrambleText text={item.count ? `${item.label} [${item.count}]` : item.label} />
               </Link>
             ))}

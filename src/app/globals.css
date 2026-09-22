@@ -104,10 +104,14 @@
     background: currentColor;
     flex: none;
   }
-  /* Active nav item: the square turns red. The header is mix-blend-difference,
-     so the source colour is the difference-inverse of the accent red (#ff2b29)
-     — over the light page it renders as that red, like the reference. */
+  /* Active nav item: the square turns red. In normal contexts (the mobile
+     menu panel, which sits on solid paper) that is simply the accent red. */
   .eyebrow[aria-current="page"]::before {
+    background: var(--color-bubble);
+  }
+  /* The desktop header is mix-blend-difference, so there the source must be the
+     difference-inverse of the red to render as that red over the light page. */
+  .site-header .eyebrow[aria-current="page"]::before {
     background: rgb(0, 212, 214);
   }
 
