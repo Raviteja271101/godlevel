@@ -27,7 +27,6 @@ export default function ScrambleText({
   speed?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const frameRef = useRef(0);
   const rafRef = useRef(0);
   const [cells, setCells] = useState<Cell[]>(() => settle(text));
 
@@ -35,22 +34,30 @@ export default function ScrambleText({
 
   const run = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
-    frameRef.current = 0;
 
-    // Each character gets its own resolve point, so the word unscrambles in order.
-    const resolveAt = text.split("").map((_, i) => i * 2.2 + Math.random() * 12);
-    const total = Math.max(...resolveAt) + 8;
+    // Time-based (milliseconds), so the sweep lasts the same wall-clock time on
+    // any refresh rate. Each character resolves left-to-right, but the whole
+    // sweep is packed into a short fixed window — so a long label resolves just
+    // as fast as a short one (it used to scale with length, dragging on ~1s),
+    // and the whole thing is quick (~180ms) like the reference's hover.
+    const chars = text.length;
+    const SPREAD = 90; // ms the left-to-right sweep takes, any word length
+    const JITTER = 60; // ms of per-character randomness
+    const DURATION = SPREAD + JITTER + 30;
+    const step = chars > 1 ? SPREAD / (chars - 1) : 0;
+    const resolveAt = text.split("").map((_, i) => i * step + Math.random() * JITTER);
 
-    const tick = () => {
-      const f = (frameRef.current += speed);
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = (now - start) * speed; // speed > 1 resolves faster
       setCells(
         text.split("").map((char, i) => {
           if (char === " ") return { char, settled: true };
-          if (f >= resolveAt[i]) return { char, settled: true };
+          if (t >= resolveAt[i]) return { char, settled: true };
           return { char: GLYPHS[Math.floor(Math.random() * GLYPHS.length)], settled: false };
         }),
       );
-      if (f < total) rafRef.current = requestAnimationFrame(tick);
+      if (t < DURATION) rafRef.current = requestAnimationFrame(tick);
       else setCells(settle(text));
     };
     rafRef.current = requestAnimationFrame(tick);

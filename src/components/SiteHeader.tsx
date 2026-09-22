@@ -7,6 +7,12 @@ import CropMarks from "./CropMarks";
 import ScrambleText from "./ScrambleText";
 import { navGroups, site, socials } from "@/data/site";
 
+/** A nav item is current when the route is it or sits beneath it
+    (e.g. /events/godlevel-tbilisi lights up "Events"). */
+function isActiveHref(pathname: string, href: string) {
+  return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+}
+
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -42,7 +48,11 @@ export default function SiteHeader() {
               <ul key={i} className="space-y-1">
                 {group.map((item) => (
                   <li key={item.label}>
-                    <Link href={item.href} className="eyebrow transition-opacity hover:opacity-60">
+                    <Link
+                      href={item.href}
+                      aria-current={isActiveHref(pathname, item.href) ? "page" : undefined}
+                      className="eyebrow transition-opacity hover:opacity-60"
+                    >
                       <ScrambleText text={item.count ? `${item.label} [${item.count}]` : item.label} />
                     </Link>
                   </li>

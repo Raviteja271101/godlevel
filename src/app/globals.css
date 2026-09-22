@@ -104,6 +104,12 @@
     background: currentColor;
     flex: none;
   }
+  /* Active nav item: the square turns red. The header is mix-blend-difference,
+     so the source colour is the difference-inverse of the accent red (#ff2b29)
+     — over the light page it renders as that red, like the reference. */
+  .eyebrow[aria-current="page"]::before {
+    background: rgb(0, 212, 214);
+  }
 
   /* Trailing-arrow link, e.g. EXPLORE ALL ↳ */
   .arrow-link::after {
