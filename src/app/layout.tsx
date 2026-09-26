@@ -6,6 +6,9 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Preloader from "@/components/Preloader";
 import Cursor from "@/components/Cursor";
 import ViewportMarks from "@/components/ViewportMarks";
+import { CartProvider } from "@/components/CartProvider";
+import CartPill from "@/components/CartPill";
+import CartDrawer from "@/components/CartDrawer";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -81,9 +84,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Cursor />
         <ViewportMarks />
 
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
+        <CartProvider>
+          <SiteHeader />
+          <main>{children}</main>
+          <SiteFooter />
+          <CartPill />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

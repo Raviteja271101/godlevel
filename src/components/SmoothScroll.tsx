@@ -34,18 +34,21 @@ touchMultiplier: 1.6,
     };
     document.addEventListener("click", onClick);
 
-    /* The mobile menu sets data-menu-open on <html>. Pause here while it is
-       up: body overflow stops the user scrolling, but not Lenis, which drives
-       the page with scripted scrolls of its own. */
-    const syncMenu = () => {
-      if (document.documentElement.hasAttribute("data-menu-open")) lenis.stop();
+    /* The mobile menu sets data-menu-open on <html>; the cart drawer sets
+       data-cart-open. Pause here while either is up: body overflow stops the
+       user scrolling, but not Lenis, which drives the page with scripted
+       scrolls of its own. */
+    const syncPanels = () => {
+      const root = document.documentElement;
+      if (root.hasAttribute("data-menu-open") || root.hasAttribute("data-cart-open"))
+        lenis.stop();
       else lenis.start();
     };
-    syncMenu();
-    const menuWatch = new MutationObserver(syncMenu);
+    syncPanels();
+    const menuWatch = new MutationObserver(syncPanels);
     menuWatch.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-menu-open"],
+      attributeFilter: ["data-menu-open", "data-cart-open"],
     });
 
     return () => {
