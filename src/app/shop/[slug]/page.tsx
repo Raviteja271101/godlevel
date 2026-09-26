@@ -97,13 +97,15 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
               <ScrambleText text="Explore all" />
             </Link>
           </div>
-          <div className="mt-[27px] grid grid-cols-2 gap-x-[10px] gap-y-5 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-[1.39vw]">
+          {/* A swipe row on a phone, as on the reference; a grid from tablet up. */}
+          <div className="no-bar mt-[27px] -mr-5 flex snap-x snap-mandatory gap-5 overflow-x-auto pr-5 md:mr-0 md:grid md:grid-cols-3 md:overflow-visible md:pr-0 lg:grid-cols-5 lg:gap-x-[1.39vw]">
             {related.map((r) => (
-              <ProductCard
-                key={r.name}
-                product={r}
-                sizes="(max-width: 767px) 46vw, (max-width: 1023px) 31vw, 18vw"
-              />
+              <div key={r.name} className="w-[82%] shrink-0 snap-start md:w-auto">
+                <ProductCard
+                  product={r}
+                  sizes="(max-width: 767px) 82vw, (max-width: 1023px) 31vw, 18vw"
+                />
+              </div>
             ))}
           </div>
         </section>

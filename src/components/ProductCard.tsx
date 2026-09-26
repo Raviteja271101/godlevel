@@ -39,8 +39,8 @@ export default function ProductCard({
         )}
       </div>
 
-      <div className="relative mt-4 pl-[39px]">
-        <span aria-hidden="true" className="product-plus absolute top-[0.3em] left-0">
+      <div className="relative mt-4 md:pl-[39px]">
+        <span aria-hidden="true" className="product-plus absolute top-[0.3em] left-0 hidden md:block">
           <span />
           <span />
         </span>

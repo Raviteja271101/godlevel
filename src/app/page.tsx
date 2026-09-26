@@ -45,7 +45,7 @@ export default function HomePage() {
           deeper side inset as the globe. Sizes are the reference's at 1440:
           158px above, a 47.5px statement, 17.8px copy dropped 110px below
           the tag, and no fade-up on this section. */}
-      <section className="gutter py-16 md:pt-[158px] md:pb-[160px]">
+      <section className="gutter pt-[126px] pb-[120px] md:pt-[158px] md:pb-[160px]">
         <div className="lg:px-[7.8vw]">
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-0">
             <div className="lg:w-[38%]">
@@ -61,7 +61,7 @@ export default function HomePage() {
             <div className="lg:w-[40%] lg:pt-[110px]">
               <div className="space-y-6">
                 {aboutCopy.map((block, i) => (
-                  <p key={i} className="measure lg:max-w-none lg:text-[1.236vw] lg:leading-[1.2]">
+                  <p key={i} className="measure max-w-none lg:text-[1.236vw] lg:leading-[1.2]">
                     {block.map((line) => (
                       <span key={line} className="block">
                         {line}

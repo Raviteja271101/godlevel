@@ -94,6 +94,7 @@ export default function CardRail({
         {children.map((child, i) => (
           <div
             key={i}
+            data-active={i === active}
             className={
               slide
                 ? "w-[82%] shrink-0 snap-start md:w-[46%] lg:w-[30.2vw]"

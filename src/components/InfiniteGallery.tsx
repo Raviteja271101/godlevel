@@ -8,15 +8,12 @@ import { artworks, type Artwork } from "@/data/artworks";
    Cells are 370 square; each still is 217 wide, mostly 3:2 (144 tall) with
    every fourth a 16:9 (122), centred on the same line so the short ones sit
    ~11px lower — the scatter that makes the sheet read as a contact sheet. */
-const CELL_W = 370;
-const CELL_H = 370;
-const IMG_W = 217;
-const IMG_H = 144;
-const IMG_H_WIDE = 122;
-const PAD_TOP = 50;
-const RADIUS = 3.56;
-
-const IMG_LEFT = (CELL_W - IMG_W) / 2;
+type Geo = { cell: number; w: number; h: number; hWide: number; padTop: number; radius: number };
+const DESKTOP: Geo = { cell: 370, w: 217, h: 144, hWide: 122, padTop: 50, radius: 3.56 };
+/* The reference tightens the sheet on a phone: 192px cells, 152px stills. */
+const PHONE: Geo = { cell: 192, w: 152, h: 101, hWide: 86, padTop: 26, radius: 2.5 };
+const geoFor = (width: number) => (width < 768 ? PHONE : DESKTOP);
+const RADIUS = DESKTOP.radius;
 
 /* Idle drift: the sheet keeps moving toward wherever the pointer sits, faster
    the further it is from centre. Measured off the reference at ~0.0006px per
@@ -52,6 +49,7 @@ export default function InfiniteGallery() {
 
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [world, setWorld] = useState({ w: 0, h: 0 });
+  const [geo, setGeo] = useState<Geo>(DESKTOP);
   const [selected, setSelected] = useState<Selection | null>(null);
 
   // Live pan state kept out of React so dragging never triggers a render.
@@ -74,20 +72,25 @@ export default function InfiniteGallery() {
       const w = el.clientWidth;
       const h = el.clientHeight;
       // One extra cell each way so a wrapped copy always overlaps the seam.
-      const cols = Math.ceil(w / CELL_W) + 1;
-      const rows = Math.ceil(h / CELL_H) + 1;
+      const g = geoFor(w);
+      const cols = Math.ceil(w / g.cell) + 1;
+      const rows = Math.ceil(h / g.cell) + 1;
 
       const next: Tile[] = [];
       const n = artworks.length;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          // Deterministic scatter so neighbours differ and every piece shows.
-          const art = artworks[(c * 3 + r * 7 + (r % 2) * 5) % n];
-          next.push({ key: `${r}-${c}`, x: c * CELL_W, y: r * CELL_H, art, wide: (c + r * 3) % 4 === 3 });
+          // Deterministic scatter: steps of 5 across and 3 down share no factor
+          // with the set size, so neither a row nor a column repeats early.
+          const art = artworks[(c * 5 + r * 3) % n];
+          next.push({ key: `${r}-${c}`, x: c * g.cell, y: r * g.cell, art, wide: (c + r * 3) % 4 === 3 });
         }
       }
-      worldRef.current = { w: cols * CELL_W, h: rows * CELL_H };
-      setWorld({ w: cols * CELL_W, h: rows * CELL_H });
+      worldRef.current = { w: cols * g.cell, h: rows * g.cell };
+      setWorld({ w: cols * g.cell, h: rows * g.cell });
+      setGeo(g);
+      // On a phone, start with a column centred and cropped ones either side.
+      if (g === PHONE && off.current.x === 0) off.current.x = w / 2 - g.cell / 2;
       setTiles(next);
     };
 
@@ -131,6 +134,23 @@ export default function InfiniteGallery() {
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /* The wheel pans the sheet rather than scrolling the page — the reference
+     gallery is a full-screen canvas with nothing below it. Non-passive so
+     the page itself never moves. */
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (openRef.current) return;
+      const scale = e.deltaMode === 1 ? 16 : 1;
+      off.current.x -= e.deltaX * scale;
+      off.current.y -= e.deltaY * scale;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
   // Keep the loop's read-only flags in step with React state / preferences.
@@ -226,6 +246,7 @@ export default function InfiniteGallery() {
   return (
     <div
       ref={viewportRef}
+      data-lenis-prevent
       className="infinite-gallery relative h-[100svh] w-full touch-none overflow-hidden bg-paper select-none [cursor:grab] data-[dragging]:[cursor:grabbing]"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
@@ -247,18 +268,18 @@ export default function InfiniteGallery() {
                 <figure
                   key={`${ci}-${t.key}`}
                   className="absolute m-0"
-                  style={{ left: t.x, top: t.y, width: CELL_W, height: CELL_H }}
+                  style={{ left: t.x, top: t.y, width: geo.cell, height: geo.cell }}
                 >
                   <div
                     data-cursor-text="more info"
                     onClick={openFromTile(t.art)}
                     className="absolute overflow-hidden bg-[#efefef]"
                     style={{
-                      left: IMG_LEFT,
-                      top: PAD_TOP + (t.wide ? (IMG_H - IMG_H_WIDE) / 2 : 0),
-                      width: IMG_W,
-                      height: t.wide ? IMG_H_WIDE : IMG_H,
-                      borderRadius: RADIUS,
+                      left: (geo.cell - geo.w) / 2,
+                      top: geo.padTop + (t.wide ? (geo.h - geo.hWide) / 2 : 0),
+                      width: geo.w,
+                      height: t.wide ? geo.hWide : geo.h,
+                      borderRadius: geo.radius,
                     }}
                   >
                     {/* Plain img: the same 14 stills tile the whole canvas, so

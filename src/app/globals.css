@@ -145,8 +145,12 @@
     transition: opacity 0.4s var(--ease-out-expo);
   }
 
-  .card-list:has(a:hover) a:not(:hover) {
-    opacity: 0.2;
+  /* Mouse only: a tap leaves :hover stuck on touch screens, which left the
+     other cards washed out at 0.2 after a swipe. */
+  @media (hover: hover) and (pointer: fine) {
+    .card-list:has(a:hover) a:not(:hover) {
+      opacity: 0.2;
+    }
   }
 
   .event-card-media {
@@ -157,8 +161,15 @@
     opacity: 0;
     transition: opacity 0.8s var(--ease-out-expo);
   }
-  .group:hover .event-card-media { inset: 8px; }
-  .group:hover .event-card-marks { opacity: 1; }
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .event-card-media { inset: 8px; }
+    .group:hover .event-card-marks { opacity: 1; }
+  }
+  /* On a phone the reference frames the current card in the slider instead. */
+  @media (max-width: 767px) {
+    [data-active="true"] .event-card-media { inset: 8px; }
+    [data-active="true"] .event-card-marks { opacity: 1; }
+  }
 
   /* Events reel: the slide on the centre line frames its photo. */
   .reel-media {
@@ -356,6 +367,9 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
 }
 .cursor-icon { width: 7px; height: 8px; flex: none; }
 
+/* The gallery is a full-screen canvas on the reference, with no footer. */
+body:has(.infinite-gallery) footer { display: none; }
+
 /* Shop tile: a hairline + that folds into a − on hover, and a description
    that opens beneath the price (both 0.4s), as on the reference. */
 .product-plus {
@@ -374,13 +388,16 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   width: 1px;
   transition: transform 0.4s var(--ease-out-expo);
 }
-.group:hover .product-plus span:last-child { transform: scaleY(0); }
 .product-desc {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.4s var(--ease-out-expo);
 }
-.group:hover .product-desc { grid-template-rows: 1fr; }
+/* Mouse only, so a tap on a touch screen does not leave a tile stuck open. */
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .product-plus span:last-child { transform: scaleY(0); }
+  .group:hover .product-desc { grid-template-rows: 1fr; }
+}
 
 /* The bubble stands in for the pointer over its targets, as on the reference. */
 html[data-cursor-ready] [data-cursor-text],

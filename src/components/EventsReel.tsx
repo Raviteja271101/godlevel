@@ -105,18 +105,12 @@ export default function EventsReel({ events }: { events: Event[] }) {
         </div>
       </div>
 
-      {/* ---- Mobile heading, standing in for the rails ---- */}
-      <div className="flex items-baseline justify-between gap-4 gutter pt-28 pb-6 lg:hidden">
-        <p className="eyebrow">Upcoming events</p>
-        <p className="opacity-50">[{events.length}]</p>
-      </div>
-
       {/* ---- The reel ----
           As on the reference: slides stack 21px apart so the neighbours show
           faded above and below, padded so the first and last can reach the
           centre line. The slide on the centre line draws its photo in 8px
           inside a crop-mark frame (0.6s). */}
-      <div className="lg:-mt-[100svh] lg:py-[calc(50svh-11.325vw)]">
+      <div className="pt-[calc(50svh-150px)] lg:-mt-[100svh] lg:py-[calc(50svh-11.325vw)]">
         {events.map((event, i) => (
           <div
             key={event.slug}
@@ -155,7 +149,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
                 }`}
               >
                 <span className="flex items-center gap-2">
-                  <span className="text-ink-30">[{String(i + 1).padStart(2, "0")}]</span>
+                  <span>[{String(i + 1).padStart(2, "0")}]</span>
                   <span className="border border-current px-1 leading-none opacity-70">
                     {code(event.country)}
                   </span>
