@@ -1,13 +1,23 @@
+"use client";
+
+import { useCart } from "./CartProvider";
+import { formatDate } from "./EventCard";
 import type { Event } from "@/data/events";
+import { site } from "@/data/site";
+
+const DEFAULT_TICKET_PRICE = 45;
 
 /**
- * The ticket / calendar pair that stays pinned to the bottom-right of the
- * event page for its whole length.
+ * The Add-to-calendar / Tickets pair pinned bottom-right for the length of
+ * an event page. Tickets drops a single ticket for this event straight into
+ * the cart and lets the drawer open itself, so both flows share one drawer.
  */
 export default function EventCTA({ event }: { event: Event }) {
+  const { addItem } = useCart();
   const soldOut = event.status === "Sold out";
+  const price = event.ticketPrice ?? DEFAULT_TICKET_PRICE;
+  const title = event.name ?? `${site.wordmark} ${event.city}`;
 
-  // A Google Calendar template link, built from the event date.
   const day = event.date.replace(/-/g, "");
   const calendarHref =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
@@ -15,6 +25,15 @@ export default function EventCTA({ event }: { event: Event }) {
     `&dates=${day}/${day}` +
     `&location=${encodeURIComponent(`${event.venue}, ${event.city}, ${event.country}`)}` +
     `&details=${encodeURIComponent(event.blurb)}`;
+
+  const addTicket = () =>
+    addItem({
+      id: `ticket-${event.slug}`,
+      name: `${title} · Ticket`,
+      detail: `${event.city} · ${formatDate(event.date)}`,
+      price,
+      image: event.image,
+    });
 
   return (
     <div className="fixed right-6 bottom-6 z-[58] flex gap-1.5 md:right-8 md:bottom-8 md:gap-2">
@@ -30,12 +49,13 @@ export default function EventCTA({ event }: { event: Event }) {
       {soldOut ? (
         <span className="rounded-[2px] bg-ink-30 px-3 py-2.5 text-white md:px-4 md:py-3">Sold out</span>
       ) : (
-        <a
-          href="#tickets"
-          className="arrow-link rounded-[2px] bg-bubble px-3 py-2.5 text-white transition-opacity hover:opacity-80 md:px-4 md:py-3"
+        <button
+          type="button"
+          onClick={addTicket}
+          className="rounded-[2px] bg-bubble px-3 py-2.5 text-white transition-opacity hover:opacity-80 md:px-4 md:py-3"
         >
-          Tickets
-        </a>
+          Tickets +
+        </button>
       )}
     </div>
   );

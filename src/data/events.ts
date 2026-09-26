@@ -25,6 +25,8 @@ export type Event = {
   blurb: string;
   /** Body copy on the detail page, one string per paragraph. */
   paragraphs: string[];
+  /** Ticket price in EUR — added to the cart when the Tickets CTA is used. */
+  ticketPrice?: number;
 };
 
 export const events: Event[] = [

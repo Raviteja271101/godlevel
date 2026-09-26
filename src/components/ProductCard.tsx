@@ -1,7 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
 import CropMarks from "./CropMarks";
 import type { Product } from "@/data/products";
+import { slugify } from "@/lib/slug";
 
+/**
+ * Grid tile: the whole card links through to the product detail page, which
+ * carries the Add to cart button. Sold-out tiles stay linkable so the detail
+ * can still be read but never trigger add-to-cart.
+ */
 export default function ProductCard({
   product,
   index,
@@ -11,8 +18,13 @@ export default function ProductCard({
   index: number;
   sizes: string;
 }) {
+  const slug = slugify(product.name);
   return (
-    <article className="group" data-cursor-text={product.soldOut ? "Sold out" : "Shop now"}>
+    <Link
+      href={`/shop/${slug}`}
+      className="group block"
+      data-cursor-text={product.soldOut ? "Sold out" : "View product"}
+    >
       <div className="relative aspect-square overflow-hidden bg-[#efefef]">
         <CropMarks />
         <Image
@@ -37,6 +49,6 @@ export default function ProductCard({
           <span className="block opacity-60">{product.detail}</span>
         </span>
       </div>
-    </article>
+    </Link>
   );
 }
