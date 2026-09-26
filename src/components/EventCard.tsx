@@ -37,14 +37,15 @@ export default function EventCard({
   return (
     <Link
       href={`/events/${event.slug}`}
-      className="group mx-auto block w-full max-w-[28em]"
+      className="group block w-full"
       data-cursor-text="Info & tickets"
     >
-      {/* The marks frame the outer box and the image sits inset within it, so
-          they read against the page rather than over the photograph. */}
-      <div className="relative flex aspect-[4/3] items-center justify-center">
-        <CropMarks />
-        <div className="relative h-[calc(100%-1em)] w-[calc(100%-1em)] overflow-hidden bg-[#efefef]">
+      {/* As on the reference: the image fills the card at rest; on hover it
+          draws in 8px on every side (0.6s expo out) and the corner marks fade
+          in around it (0.8s). */}
+      <div className="relative aspect-[4/3]">
+        <CropMarks className="event-card-marks" />
+        <div className="event-card-media absolute overflow-hidden bg-[#efefef]">
           <Image
             src={event.image}
             alt={`${event.venue}, ${event.city}`}
@@ -58,7 +59,7 @@ export default function EventCard({
       {/* The count sits clear of the text column, which is indented past it.
           Hover scrambles both lines — no zoom, no fade, as on the reference. */}
       <div className="relative mt-[0.625em] flex w-full items-start justify-between">
-        <span className="absolute top-0 left-0 text-ink-30">
+        <span className="absolute top-0 left-0">
           [{String(index + 1).padStart(2, "0")}]
         </span>
         <span className="ml-[2.5em] flex flex-col gap-[0.375em]">

@@ -8,6 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { Product } from "@/data/products";
 import { slugify } from "@/lib/slug";
 
@@ -18,6 +19,8 @@ export type CartItem = {
   price: number;
   image: string;
   qty: number;
+  /** Chosen size, when the product comes in sizes. Part of the line's id. */
+  size?: string;
 };
 
 type CartState = {
@@ -25,7 +28,7 @@ type CartState = {
   open: boolean;
   count: number;
   subtotal: number;
-  add: (product: Product) => void;
+  add: (product: Product, size?: string) => void;
   addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
@@ -92,7 +95,17 @@ const getServerSnapshot = () => cartItems;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const [open, setOpen] = useState(false);
+  /* Remembers the route the drawer was opened on, so navigating anywhere else
+     closes it — the page transition swallows link clicks before any of their
+     own handlers run, so the drawer cannot rely on those to close itself. */
+  const pathname = usePathname();
+  const [openOn, setOpenOn] = useState<string | null>(null);
+  const open = openOn !== null && openOn === pathname;
+  const setOpen = (next: boolean | ((was: boolean) => boolean)) =>
+    setOpenOn((prev) => {
+      const was = prev !== null && prev === pathname;
+      return (typeof next === "function" ? next(was) : next) ? pathname : null;
+    });
 
   /* Read storage once on the client. Runs as a side-effect (not during
      render) and does not call setState — it mutates the module store, which
@@ -117,7 +130,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") setOpenOn(null);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -144,13 +157,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       open,
       count,
       subtotal,
-      add: (product) =>
+      add: (product, size) =>
         addItem({
-          id: slugify(product.name),
+          id: size ? `${slugify(product.name)}-${slugify(size)}` : slugify(product.name),
           name: product.name,
           detail: product.detail,
           price: product.price,
           image: product.image,
+          size,
         }),
       addItem,
       remove: (id) => setCartItems(cartItems.filter((it) => it.id !== id)),
@@ -165,7 +179,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       closeCart: () => setOpen(false),
       toggleCart: () => setOpen((v) => !v),
     };
-  }, [items, open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setOpen only reads pathname
+  }, [items, open, pathname]);
 
   return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
 }

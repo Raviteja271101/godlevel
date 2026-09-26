@@ -13,13 +13,15 @@ export default function Preloader() {
   return (
     <div
       aria-hidden="true"
-      className="loader pointer-events-none fixed inset-0 z-[102] flex flex-col items-center justify-end pb-[16vh] text-ink"
+      className="loader pointer-events-none fixed inset-0 z-[102] flex flex-col items-center justify-end pb-[39px] text-ink"
     >
-      {/* Text comes from ::after, counting a registered custom property. */}
-      <p className="loader-count tabular-nums font-medium" />
+      <div className="loader-item flex flex-col items-center">
+        {/* Text comes from ::after, counting a registered custom property. */}
+        <p className="loader-count tabular-nums font-medium" />
 
-      <div className="mt-3 h-px w-[170px] bg-ink/25">
-        <div className="loader-fill h-px bg-ink" />
+        <div className="mt-2 h-[2px] w-[158px] bg-ink/20">
+          <div className="loader-fill h-[2px] bg-ink" />
+        </div>
       </div>
     </div>
   );

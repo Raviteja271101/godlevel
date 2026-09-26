@@ -115,13 +115,14 @@ export default function WorldClock() {
           </div>
 
           {/* Readouts are desktop-only; a phone drops them. */}
-          <div className="hidden lg:block lg:text-right">
+          <div className="hidden lg:block">
             <p>
               <span className="opacity-50">Local time:</span>{" "}
               <span className="tabular-nums">{localTime}</span>
             </p>
             <p className="mt-1">
               <span className="opacity-50">Time zone:</span> {offset}
+              {offset && ` (${offset.replace("GMT", "UTC")})`}
             </p>
           </div>
         </div>
@@ -137,7 +138,7 @@ export default function WorldClock() {
             </p>
           </div>
 
-          <p className="measure lg:text-right">
+          <p className="measure lg:max-w-[30.3vw] lg:text-[1.236vw] lg:leading-[1.2]">
             Moving from city to city, every destination brings a different energy, a
             different perspective, and a new story to the experience.
           </p>

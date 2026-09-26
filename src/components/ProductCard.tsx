@@ -1,53 +1,58 @@
 import Image from "next/image";
 import Link from "next/link";
-import CropMarks from "./CropMarks";
+import ScrambleText from "./ScrambleText";
 import type { Product } from "@/data/products";
+import { formatPrice } from "@/lib/price";
 import { slugify } from "@/lib/slug";
 
 /**
- * Grid tile: the whole card links through to the product detail page, which
- * carries the Add to cart button. Sold-out tiles stay linkable so the detail
- * can still be read but never trigger add-to-cart.
+ * Shop tile, as on the reference: a 2:3 photo with 2px corners; under it a
+ * hairline + at the left edge and the name and price stacked beside it. On
+ * hover the + folds into a − and the description opens beneath (0.4s). The
+ * whole tile links through to the product page, where the size is chosen.
  */
 export default function ProductCard({
   product,
-  index,
   sizes,
 }: {
   product: Product;
-  index: number;
+  /** Kept for callers that still pass a position; the reference shows none. */
+  index?: number;
   sizes: string;
 }) {
-  const slug = slugify(product.name);
   return (
     <Link
-      href={`/shop/${slug}`}
+      href={`/shop/${slugify(product.name)}`}
       className="group block"
-      data-cursor-text={product.soldOut ? "Sold out" : "View product"}
+      data-cursor-text={product.soldOut ? "Sold out" : "Shop now"}
     >
-      <div className="relative aspect-square overflow-hidden bg-[#efefef]">
-        <CropMarks />
+      <div className="relative aspect-[2/3] overflow-hidden rounded-[2px] bg-[#efefef]">
         <Image
           src={product.image}
           alt={product.name}
           fill
           sizes={sizes}
-          className={`media-zoom object-cover group-hover:scale-[1.03] ${product.soldOut ? "opacity-45" : ""}`}
+          className={`object-cover ${product.soldOut ? "opacity-45" : ""}`}
         />
         {product.soldOut && (
           <span className="absolute inset-0 grid place-items-center">Sold out</span>
         )}
       </div>
 
-      <div className="mt-3 flex gap-3">
-        <span className="text-ink-30">[{String(index + 1).padStart(2, "0")}]</span>
-        <span className="flex-1">
-          <span className="flex justify-between gap-4">
-            <span className="transition-opacity group-hover:opacity-60">{product.name}</span>
-            <span>&euro;{product.price}</span>
-          </span>
-          <span className="block opacity-60">{product.detail}</span>
+      <div className="relative mt-4 pl-[39px]">
+        <span aria-hidden="true" className="product-plus absolute top-[0.3em] left-0">
+          <span />
+          <span />
         </span>
+        <p className="font-medium">
+          <ScrambleText text={product.name} trigger="view" />
+        </p>
+        <p className="mt-1">{formatPrice(product.price)}</p>
+        <div className="product-desc">
+          <div className="overflow-hidden">
+            <p className="pt-5 opacity-50">{product.detail}</p>
+          </div>
+        </div>
       </div>
     </Link>
   );

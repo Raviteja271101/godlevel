@@ -20,11 +20,15 @@ const GAP_PX = 20;
 export default function CardRail({
   label,
   columns,
+  slide = false,
   children,
 }: {
   label: string;
   /** How many cards share the row from tablet up. */
   columns: number;
+  /** Keep it a slider at every width: the reference's events row, 435px
+      cards at 1440 running off the right edge, Prev/Next always shown. */
+  slide?: boolean;
   children: React.ReactNode[];
 }) {
   const railRef = useRef<HTMLDivElement>(null);
@@ -81,13 +85,21 @@ export default function CardRail({
         onScroll={sync}
         role="region"
         aria-label={label}
-        className="no-bar -mx-[2px] flex snap-x snap-mandatory gap-5 overflow-x-auto px-[2px] md:overflow-visible"
+        className={
+          slide
+            ? "no-bar -ml-[2px] flex snap-x snap-mandatory gap-5 overflow-x-auto pl-[2px] mr-[calc(max(20px,2.78vw)*-1)] pr-[max(20px,2.78vw)]"
+            : "no-bar -mx-[2px] flex snap-x snap-mandatory gap-5 overflow-x-auto px-[2px] md:overflow-visible"
+        }
       >
         {children.map((child, i) => (
           <div
             key={i}
-            className="w-[82%] shrink-0 snap-start md:w-[var(--card-w)]"
-            style={{ "--card-w": cardWidth } as React.CSSProperties}
+            className={
+              slide
+                ? "w-[82%] shrink-0 snap-start md:w-[46%] lg:w-[30.2vw]"
+                : "w-[82%] shrink-0 snap-start md:w-[var(--card-w)]"
+            }
+            style={slide ? undefined : ({ "--card-w": cardWidth } as React.CSSProperties)}
           >
             {child}
           </div>
@@ -95,13 +107,15 @@ export default function CardRail({
       </div>
 
       {/* Only useful while the rail actually scrolls. */}
-      <div className="mt-8 flex items-center justify-center gap-6 md:hidden">
+      <div
+        className={`flex items-center justify-center gap-6 ${slide ? "mt-[46px]" : "mt-8 md:hidden"}`}
+      >
         <button type="button" onClick={() => step(-1)} disabled={atStart} className={btn}>
-          &lt; Prev
+          &lsaquo; Prev
         </button>
         <CarouselMarks count={children.length} active={active} />
         <button type="button" onClick={() => step(1)} disabled={atEnd} className={btn}>
-          Next &gt;
+          Next &rsaquo;
         </button>
       </div>
     </div>

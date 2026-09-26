@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CropMarks from "@/components/CropMarks";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductCard from "@/components/ProductCard";
+import ScrambleText from "@/components/ScrambleText";
 import { products } from "@/data/products";
 import { slugify } from "@/lib/slug";
 
@@ -29,90 +30,82 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The reference's product page on its 12-column grid: info blocks in
+ * columns 2–3, the 2:3 photograph in 5–8, and the buy block in 10–11. Both
+ * side columns stay pinned at the vertical centre of the screen while the
+ * photographs scroll. A phone stacks photo, buy block, then info.
+ */
 export default async function ProductPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
   const product = findProduct(slug);
   if (!product) notFound();
 
-  const related = products.filter((p) => slugify(p.name) !== slug).slice(0, 3);
+  const related = products.filter((p) => slugify(p.name) !== slug).slice(0, 5);
+  const info = [
+    { label: "Materials", body: product.materials },
+    { label: "Care", body: product.care },
+    { label: "Size & fitting", body: product.fit },
+    { label: "Delivery & returns", body: "Ships worldwide within five working days. 30-day returns." },
+  ].filter((b): b is { label: string; body: string } => Boolean(b.body));
 
   return (
     <>
-      <section className="gutter pt-24 pb-16 md:pt-28 md:pb-24">
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7 lg:col-start-1">
-            <div className="relative aspect-square overflow-hidden bg-[#efefef]">
-              <CropMarks />
+      <section className="gutter pt-[120px] pb-16 lg:pt-0 lg:pb-24">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-x-[1.39vw]">
+          <div className="order-3 lg:order-none lg:col-span-2 lg:col-start-2 lg:row-start-1">
+            <div className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
+              <div className="space-y-[18px]">
+                {info.map((b) => (
+                  <div key={b.label}>
+                    <p className="eyebrow opacity-50">{b.label}</p>
+                    <p className="measure mt-[10px] max-w-none">{b.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="order-1 lg:order-none lg:col-span-4 lg:col-start-5 lg:row-start-1 lg:pt-[220px]">
+            <div className="relative aspect-[2/3] overflow-hidden bg-[#efefef]">
               <Image
                 src={product.image}
                 alt={product.name}
                 fill
                 priority
-                sizes="(max-width: 1024px) 92vw, 55vw"
-                className="object-cover"
+                sizes="(max-width: 1024px) 92vw, 30vw"
+                className={`object-cover ${product.soldOut ? "opacity-45" : ""}`}
               />
-              {product.soldOut && (
-                <span className="absolute inset-0 grid place-items-center bg-black/25 text-white">
-                  Sold out
-                </span>
-              )}
             </div>
           </div>
 
-          <div className="lg:col-span-4 lg:col-start-9">
-            <p className="eyebrow opacity-60">Merchandise</p>
-            <h1 className="display t-statement mt-4">{product.name}</h1>
-            <p className="mt-3 opacity-60">{product.detail}</p>
-            <p className="mt-6 text-lg">&euro;{product.price}</p>
-
-            <AddToCartButton product={product} />
-
-            <p className="hairline mt-10 pt-4 opacity-60">
-              Free shipping over &euro;100 &nbsp;/&nbsp; 30-day returns &nbsp;/&nbsp; All prices include VAT
-            </p>
-
-            <Link href="/shop" className="mt-10 inline-block arrow-link opacity-60 transition-opacity hover:opacity-100">
-              Back to shop
-            </Link>
+          <div className="order-2 lg:order-none lg:col-span-2 lg:col-start-10 lg:row-start-1">
+            <div className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
+              <AddToCartButton product={product} />
+            </div>
           </div>
         </div>
       </section>
 
       {related.length > 0 && (
-        <section className="gutter border-t border-hair pt-16 pb-24">
-          <p className="eyebrow">More from the shop</p>
-          <ul className="mt-8 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((r, i) => (
-              <li key={r.name}>
-                <Link
-                  href={`/shop/${slugify(r.name)}`}
-                  className="group block"
-                  data-cursor-text="View product"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-[#efefef]">
-                    <CropMarks />
-                    <Image
-                      src={r.image}
-                      alt={r.name}
-                      fill
-                      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw"
-                      className="media-zoom object-cover group-hover:scale-[1.03]"
-                    />
-                  </div>
-                  <div className="mt-3 flex gap-3">
-                    <span className="text-ink-30">[{String(i + 1).padStart(2, "0")}]</span>
-                    <span className="flex-1">
-                      <span className="flex justify-between gap-4">
-                        <span className="transition-opacity group-hover:opacity-60">{r.name}</span>
-                        <span>&euro;{r.price}</span>
-                      </span>
-                      <span className="block opacity-60">{r.detail}</span>
-                    </span>
-                  </div>
-                </Link>
-              </li>
+        <section className="gutter pb-24">
+          <div className="flex items-baseline justify-between gap-6">
+            <p className="eyebrow">
+              <ScrambleText text="You might also like" trigger="view" />
+            </p>
+            <Link href="/shop" className="arrow-link">
+              <ScrambleText text="Explore all" />
+            </Link>
+          </div>
+          <div className="mt-[27px] grid grid-cols-2 gap-x-[10px] gap-y-5 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-[1.39vw]">
+            {related.map((r) => (
+              <ProductCard
+                key={r.name}
+                product={r}
+                sizes="(max-width: 767px) 46vw, (max-width: 1023px) 31vw, 18vw"
+              />
             ))}
-          </ul>
+          </div>
         </section>
       )}
     </>

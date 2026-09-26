@@ -9,6 +9,7 @@ import ViewportMarks from "@/components/ViewportMarks";
 import { CartProvider } from "@/components/CartProvider";
 import CartPill from "@/components/CartPill";
 import CartDrawer from "@/components/CartDrawer";
+import PageTransition from "@/components/PageTransition";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -54,8 +55,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             The intro is gated rather than started here because a CSS
             animation otherwise begins the moment the stylesheet applies —
             on a cold load that is before the video has painted, so the box
-            would already be part-grown by the time anyone saw it. The 1500
-            below must stay in step with --load-duration in globals.css. */}
+            would already be part-grown by the time anyone saw it. The 2900
+            below is the intro's total length — the keyframe percentages in
+            globals.css ("First load") are of that same 2.9s. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
@@ -67,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               'if(sessionStorage.getItem("sl:loaded")||matchMedia("(prefers-reduced-motion: reduce)").matches){' +
               'd.setAttribute("data-loaded","")}else{' +
               'if(!location.hash){scrollTo(0,0)}' +
-              'var go=function(){d.setAttribute("data-intro","");setTimeout(end,1500)};' +
+              'var go=function(){d.setAttribute("data-intro","");setTimeout(end,2900)};' +
               'var kick=function(){requestAnimationFrame(function(){requestAnimationFrame(go)})};' +
               'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",kick)}else{kick()}' +
               '}}catch(e){d.setAttribute("data-loaded","")}',
@@ -83,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll />
         <Cursor />
         <ViewportMarks />
+        <PageTransition />
 
         <CartProvider>
           <SiteHeader />

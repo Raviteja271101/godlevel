@@ -42,8 +42,10 @@ export default function SiteHeader() {
             <ScrambleText text={site.wordmark} />
           </Link>
 
-          {/* Paired columns, as on the reference. */}
-          <nav className="pointer-events-auto hidden gap-x-14 lg:flex">
+          {/* Paired columns spread across columns 7–12 of the reference's
+              12-column grid (gap 1.39vw): the nav starts half a gap past the
+              centre line and runs to the right gutter. */}
+          <nav className="pointer-events-auto hidden w-[calc(50%-0.695vw)] justify-between lg:flex">
             {navGroups.map((group, i) => (
               <ul key={i} className="space-y-1">
                 {group.map((item) => (
@@ -51,7 +53,7 @@ export default function SiteHeader() {
                     <Link
                       href={item.href}
                       aria-current={isActiveHref(pathname, item.href) ? "page" : undefined}
-                      className="eyebrow transition-opacity hover:opacity-60"
+                      className="eyebrow"
                     >
                       <ScrambleText text={item.count ? `${item.label} [${item.count}]` : item.label} />
                     </Link>
@@ -71,31 +73,25 @@ export default function SiteHeader() {
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-label="Open menu"
-        className={`fixed right-6 top-5 z-50 rounded-[2px] bg-[#333] px-4 py-3 text-white md:right-8 lg:hidden ${
+        className={`menu-toggle fixed right-5 top-5 z-50 rounded-[2px] bg-[#333] p-[10px] text-white lg:hidden ${
           open ? "hidden" : ""
         }`}
       >
         <span className="eyebrow">Menu</span>
       </button>
 
-      {/* Above the header, so the wordmark does not show through the panel. */}
+      {/* Above the header, so the wordmark does not show through the panel.
+          The reference's timeline, with no dimmed backdrop: the layer fades in
+          over 0.1s, then the panel scales up from its top-right corner over
+          0.2s (expo out). Closing plays it in reverse, via swapped delays. */}
       <div
-        className={`fixed inset-0 z-[60] transition-opacity duration-300 lg:hidden ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
+        className={`menu-layer fixed inset-0 z-[60] lg:hidden ${
+          open ? "menu-open" : "pointer-events-none"
         }`}
       >
-        {/* Dim ground behind the panel; tapping it closes. */}
-        <button
-          type="button"
-          aria-hidden="true"
-          tabIndex={-1}
-          onClick={() => setOpen(false)}
-          className="absolute inset-0 w-full bg-[#00000080]"
-        />
-
         {/* The panel is a box held off the viewport edge, framed at its four
             corners — matching the insets the persistent frame already uses. */}
-        <div className="absolute inset-5 flex flex-col bg-paper p-5">
+        <div className="menu-panel absolute inset-5 flex flex-col bg-paper p-5">
           {/* The bracket lines are drawn at -1px, so they land just outside
              the box: invisible as ink on the dimmed ground, and invisible as
              paper flush against the panel. A 2px nudge puts them on the white
@@ -103,7 +99,7 @@ export default function SiteHeader() {
           <CropMarks className="m-0.5" />
           {/* Label left, close right. */}
           <div className="flex items-center justify-between">
-            <span className="rounded-[2px] bg-[#333] px-4 py-3 text-white">
+            <span className="rounded-[2px] bg-[#333] p-[10px] text-white">
               <span className="eyebrow">Menu</span>
             </span>
 
@@ -117,14 +113,14 @@ export default function SiteHeader() {
             </button>
           </div>
 
-          {/* Reference spaces this list by gap rather than per-item padding. */}
-          <nav className="hairline mt-5 flex flex-col gap-5 pt-5">
+          {/* 16px links on a 44px pitch, as measured on the reference. */}
+          <nav className="hairline mt-5 flex flex-col gap-[24.8px] pt-5">
             {navGroups.flat().map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 aria-current={isActiveHref(pathname, item.href) ? "page" : undefined}
-                className="eyebrow text-[1.2rem]"
+                className="eyebrow text-[16px] leading-[19.2px]"
               >
                 <ScrambleText text={item.count ? `${item.label} [${item.count}]` : item.label} />
               </Link>
@@ -138,9 +134,9 @@ export default function SiteHeader() {
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                className="eyebrow transition-opacity hover:opacity-60"
+                className="eyebrow"
               >
-                {s.label} &#8599;
+                <ScrambleText text={s.label} /> &#8599;
               </a>
             ))}
           </div>

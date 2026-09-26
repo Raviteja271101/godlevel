@@ -59,7 +59,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
       <div className="pointer-events-none sticky top-0 z-20 hidden h-[100svh] lg:block">
         {/* Edge inset grows with the viewport, but stays tight enough at
             mid widths that the rails never reach the centred image. */}
-        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between gap-8 px-10 xl:px-16 2xl:px-[clamp(4rem,10vw,13rem)]">
+        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between gap-8 px-[10.7vw]">
           {/* Titles */}
           <div className="pointer-events-auto">
             <p className="eyebrow mb-4">Upcoming events</p>
@@ -72,7 +72,7 @@ export default function EventsReel({ events }: { events: Event[] }) {
                     aria-current={i === active}
                     className={`flex items-center gap-3 py-1 text-left transition-opacity ${rowTone(i)}`}
                   >
-                    <span className="text-ink-30">[{i + 1}]</span>
+                    <span>[{i + 1}]</span>
                     <span className="border border-current px-1 leading-none opacity-70">
                       {code(event.country)}
                     </span>
@@ -111,35 +111,41 @@ export default function EventsReel({ events }: { events: Event[] }) {
         <p className="opacity-50">[{events.length}]</p>
       </div>
 
-      {/* ---- The reel ---- */}
-      <div className="lg:-mt-[100svh]">
+      {/* ---- The reel ----
+          As on the reference: slides stack 21px apart so the neighbours show
+          faded above and below, padded so the first and last can reach the
+          centre line. The slide on the centre line draws its photo in 8px
+          inside a crop-mark frame (0.6s). */}
+      <div className="lg:-mt-[100svh] lg:py-[calc(50svh-11.325vw)]">
         {events.map((event, i) => (
           <div
             key={event.slug}
             ref={(el) => {
               slideRefs.current[i] = el;
             }}
-            className="grid place-items-center gutter pb-14 lg:h-[100svh] lg:px-0 lg:pb-0"
+            className="grid place-items-center gutter pb-14 lg:px-0 lg:pb-[21px] lg:last:pb-0"
           >
             <Link
               href={`/events/${event.slug}`}
               data-cursor-text={event.status === "Sold out" ? "Sold out" : "Info & tickets"}
-              className="group block w-full lg:w-[min(62vw,440px)]"
+              className="group block w-full lg:w-[30.2vw]"
             >
               <div
-                className={`relative aspect-[4/3] overflow-hidden bg-[#efefef] transition-opacity duration-500 ${
-                  i === active ? "opacity-100" : "opacity-35"
+                data-active={i === active}
+                className={`reel-frame relative aspect-[4/3] transition-opacity duration-500 ${
+                  i === active ? "opacity-100" : "opacity-30"
                 }`}
               >
-                {/* Marks appear only on the slide holding the centre line. */}
-                {i === active && <CropMarks className="-m-2" />}
-                <Image
-                  src={event.image}
-                  alt={`${event.venue}, ${event.city}`}
-                  fill
-                  sizes="(max-width: 1024px) 88vw, 440px"
-                  className="media-zoom object-cover group-hover:scale-[1.03]"
-                />
+                <CropMarks className="reel-marks" />
+                <div className="reel-media absolute overflow-hidden bg-[#efefef]">
+                  <Image
+                    src={event.image}
+                    alt={`${event.venue}, ${event.city}`}
+                    fill
+                    sizes="(max-width: 1024px) 88vw, 31vw"
+                    className="object-cover"
+                  />
+                </div>
               </div>
 
               {/* Caption row — mobile only; desktop reads this off the rails. */}

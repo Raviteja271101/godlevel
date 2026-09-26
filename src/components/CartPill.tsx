@@ -4,20 +4,19 @@ import { usePathname } from "next/navigation";
 import { useCart } from "./CartProvider";
 
 /**
- * The reference's floating cart trigger: fixed bottom-right, dark pill with
+ * The reference's floating cart trigger: fixed bottom-right, #333 tag with
  * the ▪ CART (N ITEMS) label. Hides itself while the drawer is open — the
  * drawer draws its own copy in the same visual style at its top.
  *
- * Also hides on routes that already own the corner with their own ticket /
- * checkout CTA — event detail pages carry the Tickets button which adds
- * straight to the cart, so a second pill in the same corner is redundant.
+ * As on the reference it only lives in the shop (and checkout). Elsewhere
+ * the drawer still opens itself whenever something is added, e.g. a ticket.
  */
 export default function CartPill() {
   const { count, open, openCart } = useCart();
-  const pathname = usePathname();
-  const hideForRoute = /^\/events\/[^/]+/.test(pathname ?? "");
+  const pathname = usePathname() ?? "";
+  const inShop = /^\/(shop|checkout)(\/|$)/.test(pathname);
 
-  if (hideForRoute) return null;
+  if (!inShop) return null;
 
   return (
     <button
@@ -25,10 +24,10 @@ export default function CartPill() {
       onClick={openCart}
       aria-label={`Open cart, ${count} item${count === 1 ? "" : "s"}`}
       hidden={open}
-      className="fixed right-4 bottom-4 z-40 bg-night px-4 py-2 text-white shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-90 md:right-8 md:bottom-8"
+      className="fixed right-[19px] bottom-[19px] z-40 rounded-[2px] bg-[#333] p-[10px] text-white"
     >
       <span className="eyebrow">
-        CART ({count} ITEM{count === 1 ? "" : "S"})
+        Cart <span className="opacity-50">({count} item{count === 1 ? "" : "s"})</span>
       </span>
     </button>
   );

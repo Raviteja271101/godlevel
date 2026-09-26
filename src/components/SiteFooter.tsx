@@ -11,13 +11,13 @@ export default function SiteFooter() {
       {explore.links.map((link) =>
         link.href.startsWith("/") ? (
           <li key={link.label}>
-            <Link href={link.href} className="transition-opacity hover:opacity-60">
+            <Link href={link.href}>
               <ScrambleText text={link.label} />
             </Link>
           </li>
         ) : (
           <li key={link.label}>
-            <a href={link.href} className="transition-opacity hover:opacity-60">
+            <a href={link.href}>
               <ScrambleText text={link.label} />
             </a>
           </li>
@@ -30,12 +30,7 @@ export default function SiteFooter() {
     <ul className="mt-3 space-y-2">
       {socials.map((s) => (
         <li key={s.label}>
-          <a
-            href={s.href}
-            target="_blank"
-            rel="noreferrer"
-            className="transition-opacity hover:opacity-60"
-          >
+          <a href={s.href} target="_blank" rel="noreferrer">
             <ScrambleText text={s.label} />
           </a>
         </li>
@@ -44,7 +39,7 @@ export default function SiteFooter() {
   );
 
   const email = (
-    <a href={`mailto:${contact.email}`} className="transition-opacity hover:opacity-60">
+    <a href={`mailto:${contact.email}`}>
       <ScrambleText text={contact.email} />
     </a>
   );
@@ -57,7 +52,7 @@ export default function SiteFooter() {
         <p className="font-medium">{footerCta.line}</p>
         <Link
           href={footerCta.action.href}
-          className="mt-5 inline-block text-scramble transition-opacity hover:opacity-70"
+          className="mt-5 inline-block text-scramble"
         >
           <ScrambleText text={footerCta.action.label} />
         </Link>

@@ -8,11 +8,15 @@ export default function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    /* The reference's settings: Lenis defaults (lerp 0.1, touch multiplier 1)
+       rather than a fixed-duration tween, which is what gives its scroll the
+       lighter, more responsive feel. */
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.1,
       smoothWheel: true,
-touchMultiplier: 1.6,
+      anchors: { offset: -100 },
+      allowNestedScroll: true,
+      stopInertiaOnNavigate: true,
     });
 
     let frame = 0;
@@ -21,18 +25,6 @@ touchMultiplier: 1.6,
       frame = requestAnimationFrame(raf);
     };
     frame = requestAnimationFrame(raf);
-
-    // Let in-page anchors keep working.
-    const onClick = (e: MouseEvent) => {
-      const link = (e.target as HTMLElement)?.closest?.('a[href^="#"]');
-      const id = link?.getAttribute("href");
-      if (!id || id === "#") return;
-      const target = document.querySelector(id);
-      if (!target) return;
-      e.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -100 });
-    };
-    document.addEventListener("click", onClick);
 
     /* The mobile menu sets data-menu-open on <html>; the cart drawer sets
        data-cart-open. Pause here while either is up: body overflow stops the
@@ -54,7 +46,6 @@ touchMultiplier: 1.6,
     return () => {
       menuWatch.disconnect();
       cancelAnimationFrame(frame);
-      document.removeEventListener("click", onClick);
       lenis.destroy();
     };
   }, []);

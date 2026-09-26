@@ -8,7 +8,6 @@ import PartnersReel from "@/components/PartnersReel";
 // import ProductCard from "@/components/ProductCard"; // restore with the shop section
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
-import SplitWords from "@/components/SplitWords";
 import SpreadWords from "@/components/SpreadWords";
 import WorldClock from "@/components/WorldClock";
 import { events } from "@/data/events";
@@ -35,8 +34,6 @@ const aboutCopy = [
   ],
 ];
 
-const GRID_SIZES = "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw";
-
 export default function HomePage() {
   return (
     <>
@@ -45,41 +42,37 @@ export default function HomePage() {
       {/* ---------- Statement ----------
           Statement on the left, set justified in a narrow measure; supporting
           copy and the link sit off to the right. The section takes the same
-          deeper side inset as the globe. */}
-      <section className="gutter py-16 md:py-24">
+          deeper side inset as the globe. Sizes are the reference's at 1440:
+          158px above, a 47.5px statement, 17.8px copy dropped 110px below
+          the tag, and no fade-up on this section. */}
+      <section className="gutter py-16 md:pt-[158px] md:pb-[160px]">
         <div className="lg:px-[7.8vw]">
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-0">
             <div className="lg:w-[38%]">
-              <Reveal>
-                <p className="eyebrow">
-                  <ScrambleText text={`About ${site.name}`} trigger="view" />
-                </p>
-              </Reveal>
-              <Reveal delay={100}>
-                <SpreadWords
-                  text="An experience where people, culture and curiosity come together"
-                  className="display mt-6 text-[2rem] leading-none sm:text-[2.5rem] lg:text-[2.65em]"
-                />
-              </Reveal>
+              <p className="eyebrow">
+                <ScrambleText text={`About ${site.name}`} trigger="view" />
+              </p>
+              <SpreadWords
+                text="An experience where people, culture and curiosity come together"
+                className="display mt-3 text-[2rem] leading-none tracking-[-0.03em] sm:text-[2.5rem] lg:text-[3.3vw]"
+              />
             </div>
 
-            <div className="lg:w-[40%]">
-              <Reveal delay={160}>
-                <div className="space-y-6">
-                  {aboutCopy.map((block, i) => (
-                    <p key={i} className="measure lg:max-w-none">
-                      {block.map((line) => (
-                        <span key={line} className="block">
-                          {line}
-                        </span>
-                      ))}
-                    </p>
-                  ))}
-                </div>
-                <Link href="/about" className="arrow-link mt-8 inline-block">
-                  More about us
-                </Link>
-              </Reveal>
+            <div className="lg:w-[40%] lg:pt-[110px]">
+              <div className="space-y-6">
+                {aboutCopy.map((block, i) => (
+                  <p key={i} className="measure lg:max-w-none lg:text-[1.236vw] lg:leading-[1.2]">
+                    {block.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ))}
+              </div>
+              <Link href="/about" className="arrow-link mt-11 inline-block">
+                <ScrambleText text="More about us" />
+              </Link>
             </div>
           </div>
         </div>
@@ -89,26 +82,27 @@ export default function HomePage() {
 
       {/* ---------- Upcoming events ---------- */}
       <section className="gutter py-16 md:py-24">
-        <Reveal>
-          <div className="flex items-baseline justify-between gap-6">
-            <p className="eyebrow">
-              <ScrambleText text="Upcoming events" trigger="view" />
-            </p>
-            <Link href="/events" className="arrow-link">
-              Explore all
-            </Link>
-          </div>
-        </Reveal>
+        <div className="flex items-baseline justify-between gap-6">
+          <p className="eyebrow">
+            <ScrambleText text="Upcoming events" trigger="view" />
+          </p>
+          <Link href="/events" className="arrow-link">
+            <ScrambleText text="Explore all" />
+          </Link>
+        </div>
 
-        <Reveal>
-          <div className="card-list mt-8">
-            <CardRail label="Upcoming events" columns={3}>
-              {events.slice(0, 3).map((event, i) => (
-                <EventCard key={event.code} event={event} index={i} sizes={GRID_SIZES} />
-              ))}
-            </CardRail>
-          </div>
-        </Reveal>
+        <div className="card-list mt-8">
+          <CardRail label="Upcoming events" columns={3} slide>
+            {events.slice(0, 3).map((event, i) => (
+              <EventCard
+                key={event.code}
+                event={event}
+                index={i}
+                sizes="(max-width: 767px) 82vw, (max-width: 1023px) 46vw, 31vw"
+              />
+            ))}
+          </CardRail>
+        </div>
       </section>
 
       <WorldClock />
@@ -154,7 +148,7 @@ export default function HomePage() {
         <Reveal>
           <div className="mt-8 flex justify-end">
             <Link href="/label" className="arrow-link">
-              Join the collective
+              <ScrambleText text="Join the collective" />
             </Link>
           </div>
         </Reveal>

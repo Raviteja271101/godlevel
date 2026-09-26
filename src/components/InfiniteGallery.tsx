@@ -4,15 +4,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import CropMarks from "./CropMarks";
 import { artworks, type Artwork } from "@/data/artworks";
 
-/* Canvas geometry, measured off the reference's infinite grid.
-   Cells are 374 square; the still sits 218×123 (16:9) near the top of its
-   cell, leaving the airy whitespace that makes the sheet read as scattered. */
-const CELL_W = 374;
-const CELL_H = 374;
-const IMG_W = 218;
-const IMG_H = 123;
+/* Canvas geometry, measured off the reference's infinite grid at 1440.
+   Cells are 370 square; each still is 217 wide, mostly 3:2 (144 tall) with
+   every fourth a 16:9 (122), centred on the same line so the short ones sit
+   ~11px lower — the scatter that makes the sheet read as a contact sheet. */
+const CELL_W = 370;
+const CELL_H = 370;
+const IMG_W = 217;
+const IMG_H = 144;
+const IMG_H_WIDE = 122;
 const PAD_TOP = 50;
-const RADIUS = 4;
+const RADIUS = 3.56;
 
 const IMG_LEFT = (CELL_W - IMG_W) / 2;
 
@@ -26,7 +28,7 @@ const IDLE_FACTOR = 0.0006;
 const CARD_W = 320;
 const CARD_H_EST = 500;
 
-type Tile = { key: string; x: number; y: number; art: Artwork };
+type Tile = { key: string; x: number; y: number; art: Artwork; wide: boolean };
 type Rect = { left: number; top: number; width: number; height: number };
 type Selection = { art: Artwork; rect: Rect };
 
@@ -81,7 +83,7 @@ export default function InfiniteGallery() {
         for (let c = 0; c < cols; c++) {
           // Deterministic scatter so neighbours differ and every piece shows.
           const art = artworks[(c * 3 + r * 7 + (r % 2) * 5) % n];
-          next.push({ key: `${r}-${c}`, x: c * CELL_W, y: r * CELL_H, art });
+          next.push({ key: `${r}-${c}`, x: c * CELL_W, y: r * CELL_H, art, wide: (c + r * 3) % 4 === 3 });
         }
       }
       worldRef.current = { w: cols * CELL_W, h: rows * CELL_H };
@@ -251,7 +253,13 @@ export default function InfiniteGallery() {
                     data-cursor-text="more info"
                     onClick={openFromTile(t.art)}
                     className="absolute overflow-hidden bg-[#efefef]"
-                    style={{ left: IMG_LEFT, top: PAD_TOP, width: IMG_W, height: IMG_H, borderRadius: RADIUS }}
+                    style={{
+                      left: IMG_LEFT,
+                      top: PAD_TOP + (t.wide ? (IMG_H - IMG_H_WIDE) / 2 : 0),
+                      width: IMG_W,
+                      height: t.wide ? IMG_H_WIDE : IMG_H,
+                      borderRadius: RADIUS,
+                    }}
                   >
                     {/* Plain img: the same 14 stills tile the whole canvas, so
                         the optimizer would only get in the way here. */}

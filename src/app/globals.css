@@ -23,6 +23,9 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    /* Keep the scrollbar's space when the intro, menu or cart locks the page,
+       so the layout does not jump sideways as it comes and goes. */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -92,15 +95,15 @@
   .eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.6em;
+    gap: 0.5em;
     font-size: inherit;
     line-height: inherit;
     text-transform: uppercase;
   }
   .eyebrow::before {
     content: "";
-    width: 0.42em;
-    height: 0.42em;
+    width: 0.58em;
+    height: 0.58em;
     background: currentColor;
     flex: none;
   }
@@ -139,12 +142,35 @@
      JS; a :has() rule needs no script. Scoped to the anchors rather than the
      grid cells so it stays clear of the reveal animation on the wrappers. */
   .card-list a {
-    transition: opacity 0.45s var(--ease-out-expo);
+    transition: opacity 0.4s var(--ease-out-expo);
   }
 
   .card-list:has(a:hover) a:not(:hover) {
-    opacity: 0.3;
+    opacity: 0.2;
   }
+
+  .event-card-media {
+    inset: 0;
+    transition: inset 0.6s var(--ease-out-expo);
+  }
+  .event-card-marks {
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-out-expo);
+  }
+  .group:hover .event-card-media { inset: 8px; }
+  .group:hover .event-card-marks { opacity: 1; }
+
+  /* Events reel: the slide on the centre line frames its photo. */
+  .reel-media {
+    inset: 0;
+    transition: inset 0.6s var(--ease-out-expo);
+  }
+  .reel-marks {
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out-expo);
+  }
+  .reel-frame[data-active="true"] .reel-media { inset: 8px; }
+  .reel-frame[data-active="true"] .reel-marks { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
     .card-list a {
@@ -190,8 +216,9 @@
 .viewport-marks i.ml { top: 50%; left: 0; width: 10px; height: 19px; margin-top: -9.5px; border-left-width: 1px; border-top-width: 1px; border-bottom-width: 1px; }
 .viewport-marks i.mr { top: 50%; right: 0; width: 10px; height: 19px; margin-top: -9.5px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; }
 
-@media (max-width: 640px) {
-  .viewport-marks { inset: 12px; }
+/* The reference drops the frame on phones. */
+@media (max-width: 767px) {
+  .viewport-marks { display: none; }
 }
 
 /* ------------------------------------------------------------------
@@ -258,49 +285,108 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   display: inline-block;
   will-change: transform;
 }
-.scramble-char[data-scrambling="true"] { color: var(--color-scramble); }
+/* Accent glyphs flash the reference red. Inside the difference-blended
+   header the source is its inverse (cyan), which renders as that red. */
+.scramble-char[data-accent="true"] { color: var(--color-bubble); }
+.site-header .scramble-char[data-accent="true"] { color: var(--color-scramble); }
 
-.page-wipe {
+/* Route change panel (see PageTransition.tsx). Parked below the viewport,
+   raised over the page before navigating, then slid away upward. The jump
+   from the top back to the bottom happens with no transition, off screen. */
+.page-transition {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 90;
+  display: grid;
+  place-items: center;
   background: var(--color-ink);
-  animation: wipe-up 0.85s cubic-bezier(0.76, 0, 0.24, 1) forwards;
   pointer-events: none;
+  transform: translateY(100%);
 }
-@keyframes wipe-up { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+.page-transition[data-phase="cover"] {
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.page-transition[data-phase="reveal"] {
+  transform: translateY(-100%);
+  transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
 
-/* Opacity only: a transform here (even an identity one left by fill-mode)
-   would make this the containing block for position:fixed descendants,
-   which breaks the pinned event CTA. Sections still lift via Reveal. */
-.page-enter { animation: page-in 0.9s var(--ease-out-expo) both; }
-@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
-
-/* Cursor bubble — red pill, as on the reference. */
-.cursor-bubble {
+/* Cursor bubble — the reference's red tag. The anchor rides the pointer; the
+   bubble hangs off its top-left corner (top-right when flipped near the right
+   edge) and pops from scale 0 in 0.1s. */
+.cursor-anchor {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 70;
   pointer-events: none;
-  display: grid;
-  place-items: center;
-  padding: 0.9rem 1.2rem;
+  will-change: transform;
+}
+.cursor-bubble {
+  display: flex;
+  align-items: center;
+  gap: 5.6px;
+  padding: 9.9px;
   border-radius: 2px;
   background: var(--color-bubble);
   color: #fff;
   font-family: var(--font-mono-ui);
-  font-size: 13px;
-  line-height: 1;
+  font-size: 11.9px;
+  line-height: 1.1;
   text-transform: uppercase;
   white-space: nowrap;
+  /* The reference's states: hidden at scale 0 from the centre; active pops
+     and fades in over 0.1s; active-edge slides it to the pointer's left over
+     the same 0.1s. The hair of rotation keeps the scale anti-aliased. */
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.4);
+  transform: translateX(0%) scale(0) rotate(0.001deg);
   transition:
-    opacity 0.35s var(--ease-out-expo),
-    transform 0.45s var(--ease-out-expo);
+    transform 0.1s cubic-bezier(0.625, 0.05, 0, 1),
+    opacity 0.1s cubic-bezier(0.625, 0.05, 0, 1);
 }
-.cursor-bubble[data-active="true"] { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.cursor-anchor[data-cursor="active"] .cursor-bubble {
+  opacity: 1;
+  transform: translateX(0%) scale(1) rotate(0.001deg);
+}
+.cursor-anchor[data-cursor="active-edge"] .cursor-bubble {
+  opacity: 1;
+  transform: translateX(-100%) scale(1) rotate(0.001deg);
+}
+.cursor-icon { width: 7px; height: 8px; flex: none; }
+
+/* Shop tile: a hairline + that folds into a − on hover, and a description
+   that opens beneath the price (both 0.4s), as on the reference. */
+.product-plus {
+  width: 9px;
+  height: 9px;
+}
+.product-plus span {
+  position: absolute;
+  background: currentColor;
+}
+.product-plus span:first-child { left: 0; right: 0; top: 4px; height: 1px; }
+.product-plus span:last-child {
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  width: 1px;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+.group:hover .product-plus span:last-child { transform: scaleY(0); }
+.product-desc {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s var(--ease-out-expo);
+}
+.group:hover .product-desc { grid-template-rows: 1fr; }
+
+/* The bubble stands in for the pointer over its targets, as on the reference. */
+html[data-cursor-ready] [data-cursor-text],
+html[data-cursor-ready] [data-cursor-text] * {
+  cursor: none;
+}
 
 .media-zoom {
   transition:
@@ -317,22 +403,26 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   [data-reveal],
   .splitwords .word { opacity: 1 !important; transform: none !important; transition: none !important; }
   .marquee-track { animation: none !important; }
-  .page-wipe { display: none; }
-  .page-enter { animation: none; }
-  .cursor-bubble { display: none; }
+  .page-transition { display: none; }
+  .cursor-anchor { display: none; }
+  .menu-layer,
+  .menu-panel { transition: none !important; }
 }
 /* ------------------------------------------------------------------
    First load
-   The hero opens as a small centred box that grows with the count, then
-   expands to full bleed once `data-loaded` lands. This all runs on CSS
-   animations rather than script: they start the moment the stylesheet
-   applies, whereas a React effect cannot begin until hydration finishes
-   and so left the readout stuck at 0% for as long as that took.
-   The duration below must stay in step with the timeout in layout.tsx.
+   The reference's intro timeline (from its loader script), rebuilt in CSS
+   so it starts the moment the stylesheet applies rather than after
+   hydration, which left the readout stuck at 0% for as long as that took.
+     0–2.1s    count 0→100 (power2.inOut); readout fades in over 0.6s
+     0.3–0.9s  box opens from nothing to 4rem (power4.out)
+     1.1–1.9s  box to 45vw × 25vw (65vw square on phones) while the
+               wordmark scales in (power4.inOut)
+     2.1–2.9s  box to full bleed, the video inset closes, the readout
+               fades and slides away (power4.inOut)
+     2.9s      data-loaded; 0.5s later the nav, captions and frame drop in
+   Keyframe percentages are of the 2.9s total, which must stay in step with
+   the timeout in layout.tsx.
    ------------------------------------------------------------------ */
-:root {
-  --load-duration: 1.5s;
-}
 
 /* Registered so it can be animated, then printed through a counter. */
 @property --load-pct {
@@ -352,14 +442,41 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   to { width: 100%; }
 }
 
-@keyframes hero-open {
-  from { transform: scale(0.12); }
-  to { transform: scale(0.44); }
+/* 0.6s power2.out in; hold; 2.1s → 2.6s power2.in out. */
+@keyframes loader-fade {
+  0% { opacity: 0; animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  20.69% { opacity: 1; }
+  72.41% { opacity: 1; animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+  89.66%, 100% { opacity: 0; }
 }
 
-@keyframes frame-open {
-  from { width: calc(12% + 1.25rem); height: calc(12% + 1.25rem); }
-  to { width: calc(44% + 1.25rem); height: calc(44% + 1.25rem); }
+@keyframes loader-slide {
+  0%, 72.41% { transform: translateX(0); animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  100% { transform: translateX(-3em); }
+}
+
+@keyframes box-open {
+  0%, 10.34% { width: 0; height: 0; animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }
+  31.03%, 37.93% { width: 4rem; height: 4rem; animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  65.52%, 72.41% { width: 45vw; height: 25vw; animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  100% { width: 100%; height: 100%; }
+}
+
+@keyframes box-open-phone {
+  0%, 10.34% { width: 0; height: 0; animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }
+  31.03%, 37.93% { width: 4rem; height: 4rem; animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  65.52%, 72.41% { width: 65vw; height: 65vw; animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  100% { width: 100%; height: 100%; }
+}
+
+@keyframes inset-close {
+  0%, 72.41% { padding: 9.4px; animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  100% { padding: 0; }
+}
+
+@keyframes logo-in {
+  0%, 37.93% { transform: scale(0); animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1); }
+  65.52%, 100% { transform: scale(1); }
 }
 
 .loader-count::after {
@@ -367,16 +484,20 @@ html:not([data-loaded]) .splitwords .word { transition: none !important; }
   content: counter(pct) "%";
 }
 
+html:not([data-loaded]) .loader-item { opacity: 0; }
+html:not([data-loaded]) .loader-fill { width: 0; }
+
 html[data-intro]:not([data-loaded]) .loader-count {
-  animation: load-count var(--load-duration) var(--ease-out-expo) both;
+  animation: load-count 2.1s cubic-bezier(0.645, 0.045, 0.355, 1) both;
 }
-
-html:not([data-loaded]) .loader-fill {
-  width: 0;
-}
-
 html[data-intro]:not([data-loaded]) .loader-fill {
-  animation: load-bar var(--load-duration) var(--ease-out-expo) both;
+  animation: load-bar 2.1s cubic-bezier(0.645, 0.045, 0.355, 1) both;
+}
+html[data-intro]:not([data-loaded]) .loader-item {
+  animation: loader-fade 2.9s linear both;
+}
+html[data-intro]:not([data-loaded]) .loader {
+  animation: loader-slide 2.9s linear both;
 }
 
 /* Hold the finished value through the fade-out. Without this the count drops
@@ -391,61 +512,64 @@ html[data-loaded] .loader {
   transition: opacity 0.5s linear, visibility 0s linear 0.5s;
 }
 
-.hero-media {
-  transform-origin: center;
+/* The box is resized, not scaled, so the video stays cover-fitted inside it
+   and the marks stay hairline-thin. */
+.hero-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  translate: -50% -50%;
+  overflow: hidden;
+  /* .marks paints in currentColor, and the hero sets text-white — invisible
+     against the pale loading ground, so force ink here. */
+  color: var(--color-ink);
+}
+.hero-inset {
+  position: absolute;
+  inset: 0;
+}
+.hero-drift {
+  translate: 0 calc(var(--hero-p, 0) * 16.6667%);
+}
+/* Captions sit on the page gutter, the same distance from the bottom. */
+.hero-edge {
+  bottom: max(20px, 2.78vw);
+  margin-inline: max(20px, 2.78vw);
 }
 
-/* Held at the opening size until the intro is triggered, so a slow first
+/* Held at the opening state until the intro is triggered, so a slow first
    paint cannot leave the box part-grown before anyone has seen it. */
-html:not([data-loaded]) .hero-media {
-  transform: scale(0.12);
+html:not([data-loaded]) .hero-box { width: 0; height: 0; }
+html:not([data-loaded]) .hero-inset { padding: 9.4px; }
+html:not([data-loaded]) .hero-logo { transform: scale(0); }
+
+html[data-intro]:not([data-loaded]) .hero-box { animation: box-open 2.9s linear both; }
+html[data-intro]:not([data-loaded]) .hero-inset { animation: inset-close 2.9s linear both; }
+html[data-intro]:not([data-loaded]) .hero-logo { animation: logo-in 2.9s linear both; }
+
+@media (max-width: 767px) {
+  html[data-intro]:not([data-loaded]) .hero-box { animation-name: box-open-phone; }
 }
 
-html[data-intro]:not([data-loaded]) .hero-media {
-  animation: hero-open var(--load-duration) var(--ease-out-expo) both;
-}
+/* Once open, ViewportMarks carry the frame. */
+html[data-loaded] .hero-box-marks { display: none; }
 
-/* Applies to the final expansion only — during the count the keyframes
-   already carry the value, and a transition would only lag them. */
-html[data-loaded] .hero-media {
-  transition: transform 1.2s var(--ease-out-expo);
-}
-
+/* Captions rise 2em into place with the nav, 0.5s after the box lands. */
 .hero-aside {
-  transition: opacity 0.7s var(--ease-out-expo) 0.4s;
+  transition:
+    opacity 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s,
+    transform 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s;
+}
+html:not([data-loaded]) .hero-aside {
+  opacity: 0;
+  transform: translateY(2em);
 }
 
 html:not([data-loaded]) .hero {
   z-index: 101;
   background: var(--color-paper);
-}
-
-/* Frame for the loading box. Tracks the same timeline as the scale but is
-   never transformed, so the brackets stay hairline-thin. */
-.hero-frame {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(12% + 1.25rem);
-  height: calc(12% + 1.25rem);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  /* .marks paints in currentColor, and the hero sets text-white — invisible
-     against the pale loading ground, so force ink here. */
-  color: var(--color-ink);
-}
-
-html[data-intro]:not([data-loaded]) .hero-frame {
-  animation: frame-open var(--load-duration) var(--ease-out-expo) both;
-}
-
-/* Once open, ViewportMarks carry the frame. */
-html[data-loaded] .hero-frame {
-  display: none;
-}
-
-html:not([data-loaded]) .hero-aside {
-  opacity: 0;
 }
 
 /* Nothing should move while the intro plays. */
@@ -456,8 +580,28 @@ html:not([data-loaded]) body {
 /* The loader screen shows only the box and the readout, so the nav and the
    viewport frame stay out until the hero has opened. */
 html:not([data-loaded]) .site-header,
+html:not([data-loaded]) .menu-toggle,
 html:not([data-loaded]) .viewport-marks {
   opacity: 0;
+}
+
+/* After the intro the nav and menu button drop in 32px and the frame settles
+   from 1.05 — both power4.out, as on the reference. */
+html:not([data-loaded]) .site-header,
+html:not([data-loaded]) .menu-toggle {
+  transform: translateY(-32px);
+}
+html:not([data-loaded]) .viewport-marks {
+  transform: scale(1.05);
+}
+.viewport-marks {
+  transition:
+    opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Land with the nav, 0.5s after the box — but hide at once for the menu. */
+html[data-loaded]:not([data-menu-open]) .viewport-marks {
+  transition-delay: 0.5s;
 }
 
 /* The open menu draws its own frame. The persistent one would double it,
@@ -466,13 +610,37 @@ html[data-menu-open] .viewport-marks {
   opacity: 0;
 }
 
-.site-header {
-  transition: opacity 0.6s var(--ease-out-expo) 0.5s;
+.site-header,
+.menu-toggle {
+  transition:
+    opacity 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s,
+    transform 1s cubic-bezier(0.23, 1, 0.32, 1) 0.5s;
+}
+
+/* Mobile menu: the layer fades in over 0.1s, then the panel scales up from
+   its top-right corner over 0.2s. Closing reverses the order. */
+.menu-layer {
+  opacity: 0;
+  transition: opacity 0.1s linear 0.2s;
+}
+.menu-layer.menu-open {
+  opacity: 1;
+  transition-delay: 0s;
+}
+.menu-panel {
+  transform: scale(0);
+  transform-origin: top right;
+  transition: transform 0.2s cubic-bezier(0.7, 0, 0.84, 0);
+}
+.menu-open .menu-panel {
+  transform: scale(1);
+  transition: transform 0.2s var(--ease-out-expo) 0.1s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-media,
-  .hero-aside {
+  .hero-aside,
+  .hero-drift {
     transition: none;
+    translate: none;
   }
 }
