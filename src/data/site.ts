@@ -57,7 +57,7 @@ export const footerColumns = [
       { label: "Collective", href: "/label" },
       { label: "Community", href: "/community" },
       { label: "Partners", href: "/#partners" },
-      { label: "Contact", href: `mailto:${contact.email}` },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ] as const;
